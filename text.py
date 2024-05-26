@@ -1,61 +1,61 @@
-# import pygame
-
-# # 初始化pygame
-# pygame.init()
-
-# # 设置窗口宽度和高度
-# width = 800
-# height = 600
-# window = pygame.display.set_mode((width, height))
-
-# # 背景图片路径
-# bg_path = "img/bg.jpg"
-# bg = pygame.image.load(bg_path).convert()  # 加载背景图片并转换为pygame.Surface对象
-# window.blit(bg, (0, 0))  # 绘制背景图片
-
-# # 设置窗口标题
-# pygame.display.set_caption("Transparent Rectangle")
-
-# # 设置透明矩形颜色和大小
-# transparent_color = (100, 100, 100, 200)
-# rect = pygame.Surface((200, 200), pygame.SRCALPHA)
-# rect.fill(transparent_color)
-# window.blit(rect, (200, 200))
-
-# # 游戏运行循环
-# running = True
-# while running:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#     pygame.display.update()
-
-# # 退出pygame
-# pygame.quit()
-
-import pygame
-
-pygame.init()
-
-width = 800
-height = 600
-window = pygame.display.set_mode((width, height))
-bg_path = "img/bg.jpg"  # 背景图片路径
-bg = pygame.image.load(bg_path).convert()  # 加载背景图片并转换为pygame.Surface对象
-window.blit(bg, (0, 0))  # 绘制背景图片
-pygame.display.set_caption("Transparent Rectangle")
-
-rect_surface = pygame.Surface((200, 100),
-                              pygame.SRCALPHA)  # 创建一个带有Alpha通道的Surface对象
-pygame.draw.rect(rect_surface, (100, 100, 100, 128),
-                 (0, 0, 200, 100))  # 在Surface对象上绘制半透明矩形
-window.blit(rect_surface, (100, 250))  # 将带有半透明矩形的Surface对象绘制到窗口中
-
-running = True
-while running:
+def handle_event(self):
+    if self.btn_4x4.is_clicked(pygame.mouse.get_pos()) == True:
+        self.btn_4x4.color = (127, 127, 127)  # 设置按钮颜色为灰色
+        if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
+            self.restart("4x4")  # 切换到4x4游戏
+    else:
+        self.btn_4x4.color = (237, 224, 200)  # 恢复按钮颜色为白色
+    self.btn_4x4.draw(self.screen)  # 重新绘制4x4按钮
+    if self.btn_5x5.is_clicked(pygame.mouse.get_pos()) == True:
+        self.btn_5x5.color = (127, 127, 127)  # 设置按钮颜色为灰色
+        if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
+            self.restart("5x5")  # 切换到5x5游戏
+    else:
+        self.btn_5x5.color = (237, 224, 200)  # 恢复按钮颜色为白色
+    self.btn_5x5.draw(self.screen)  # 重新绘制5x5按钮
+    if self.btn_6x6.is_clicked(pygame.mouse.get_pos()) == True:
+        self.btn_6x6.color = (127, 127, 127)  # 设置按钮颜色为灰色
+        if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
+            self.restart("6x6")  # 切换到6x6游戏
+    else:
+        self.btn_6x6.color = (237, 224, 200)  # 恢复按钮颜色为白色
+    self.btn_6x6.draw(self.screen)  # 重新绘制6x6按钮
+    # 如果光标在返回按钮上，则设置按钮背景色为灰色，否则恢复为白色
+    if self.btn_back.is_clicked(pygame.mouse.get_pos()) == True:
+        self.btn_back.color = (127, 127, 127)  # 设置按钮颜色为灰色
+        if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
+            sm.scenemanager.change_scene("mode_scene")  # 切换到游戏场景
+    else:
+        self.btn_back.color = (237, 224, 200)  # 恢复按钮颜色为白色
+    self.btn_back.draw(self.screen)  # 重新绘制返回按钮
+    # 如果光标在重新开始按钮上，则设置按钮背景色为灰色，否则恢复为白色
+    if self.btn_restart.is_clicked(pygame.mouse.get_pos()) == True:
+        self.btn_restart.color = (127, 127, 127)  # 设置按钮颜色为灰色
+        if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
+            self.restart(self.mode)  # 重新开始游戏
+    else:
+        self.btn_restart.color = (237, 224, 200)  # 恢复按钮颜色为白色
+    self.btn_restart.draw(self.screen)  # 重新绘制重新开始按钮
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
-    pygame.display.update()
-
-pygame.quit()
+            sm.scenemanager.change_scene("mode_scene")  # 切换到游戏场景
+        elif event.type == pygame.KEYDOWN:
+            if not self.is_game_over():
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    self.move_tiles_left()
+                    self.add_new_tile()
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    self.move_tiles_right()
+                    self.add_new_tile()
+                elif event.key == pygame.K_w or event.key == pygame.K_UP:
+                    self.move_tiles_up()
+                    self.add_new_tile()
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    self.move_tiles_down()
+                    self.add_new_tile()  # 在移动后生成新数字块
+            else:
+                #self.popup("游戏结束!\n是否重新开始?")  # 弹出提示框
+                if self.popup("游戏结束!", "是否重新开始?") == True:  # 重新开始游戏
+                    self.restart()  # 重新开始游戏
+                else:
+                    pass

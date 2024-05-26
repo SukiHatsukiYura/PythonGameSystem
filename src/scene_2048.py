@@ -62,7 +62,7 @@ class Game2048(scene.Scene):
             self.high_scroe_6x6 = self.score_dict["high_scroe_6x6"]
 
         self.grid = [[0] * self.GRID_SIZE for _ in range(self.GRID_SIZE)]
-        self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 32)
+        self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 28)
         self.grid_font = pygame.font.Font(pygame.font.match_font("SimHei"), 48)
         self.screen = pygame.display.set_mode((600 + 50 + 200, 600 + 50))
         pygame.display.set_caption("2048")
@@ -94,8 +94,13 @@ class Game2048(scene.Scene):
         self.add_new_tile()
 
     def draw(self):
-        # 绘制游戏界面格子
         self.screen.fill(self.BACKGROUND_COLOR)
+        self.draw_gird()
+        self.draw_score()
+        self.draw_lines()
+
+    def draw_gird(self):
+        # 绘制格子
         for row in range(self.GRID_SIZE):
             for col in range(self.GRID_SIZE):
                 cell_value = self.grid[row][col]
@@ -109,26 +114,24 @@ class Game2048(scene.Scene):
                 if cell_value != 0:
                     self.draw_text(self.screen, str(cell_value), cell_rect)
 
-        pygame.draw.line(self.screen, (0, 0, 0), (648, 0), (648, 650), 2)
-        pygame.draw.line(self.screen, (0, 0, 0), (0, 0), (648, 0), 2)
-        pygame.draw.line(self.screen, (0, 0, 0), (0, 0), (0, 650), 2)
-        pygame.draw.line(self.screen, (0, 0, 0), (0, 648), (648, 648), 2)
+    def draw_lines(self):
+        # 绘制外框线
+        pygame.draw.line(self.screen, (255, 225, 255), (648, 0), (648, 650), 2)
+        pygame.draw.line(self.screen, (255, 225, 255), (0, 0), (648, 0), 2)
+        pygame.draw.line(self.screen, (255, 225, 255), (0, 0), (0, 650), 2)
+        pygame.draw.line(self.screen, (255, 225, 255), (0, 647), (647, 647), 2)
 
+    def draw_score(self):
         # 绘制积分
-        score_text = self.text_font.render("分数:", True, self.TEXT_COLOR)
+        score_text = self.text_font.render("当前分数:", True, (255,225,255))
         score_text_num = self.text_font.render(str(self.score), True,
                                                self.TEXT_COLOR)
         # 绘制最高分
 
-        # with open("score/score_2048.json", "r", encoding="utf-8") as f:
-        #     self.high_scroe_4x4 = f.readline()
-        #     self.high_scroe_5x5 = f.readline()
-        #     self.high_scroe_6x6 = f.readline()
-
         self.screen.blit(score_text, (660, 10))
         self.screen.blit(score_text_num, (660, 50))
 
-        self.screen.blit(self.text_font.render("最高分:", True, self.TEXT_COLOR),
+        self.screen.blit(self.text_font.render("最高分数:", True,(255,225,255)),
                          (660, 90))
         self.screen.blit(
             self.text_font.render("4x4:" + str(self.high_scroe_4x4).strip(),
