@@ -89,7 +89,7 @@ class Button:
                 change(mode)  # 切换到对应模式
         else:
             self.color = (237, 224, 200)  # 恢复按钮颜色为米黄色
-        self.draw(screen)  # 重新绘制按钮
+        self.draw(screen,120)  # 重新绘制按钮
 
     def is_clicked(self, mouse_pos):
         # 检查按钮是否被点击

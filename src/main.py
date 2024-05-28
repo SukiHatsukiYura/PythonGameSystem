@@ -13,5 +13,5 @@ while running:
         running = False
     pygame.display.update()
     colck.tick(FPS)
-    
+
 pygame.quit()

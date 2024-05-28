@@ -43,15 +43,7 @@ class ModeScene(scene.Scene):
 
     def handle_event(self):  #处理事件
         # 选择跳转2048游戏
-        if self.btn_2048.is_clicked(pygame.mouse.get_pos()) == True:
-            self.btn_2048.color = color.GRAY
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONUP:
-                    scene_manager.scenemanager.change_scene("scene_2048")
-        else:
-            self.btn_2048.color = color.WHITE
-        self.btn_2048.draw(self.screen,120)
-
+        self.btn_2048.btn_click(self.screen,scene_manager.scenemanager.change_scene,"scene_2048")
         # 选择跳转五子棋游戏
         if self.btn_gobang.is_clicked(pygame.mouse.get_pos()) == True:
             self.btn_gobang.color = color.GRAY
@@ -64,16 +56,7 @@ class ModeScene(scene.Scene):
         self.btn_gobang.draw(self.screen,120)
 
         # 选择跳转数独游戏
-        if self.btn_sudoku.is_clicked(pygame.mouse.get_pos()) == True:
-            self.btn_sudoku.color = color.GRAY
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONUP:
-                    pygame.quit()
-                    exit()
-        else:
-            self.btn_sudoku.color = color.WHITE
-        self.btn_sudoku.draw(self.screen,120)
-
+        self.btn_sudoku.btn_click(self.screen,scene_manager.scenemanager.change_scene,"scene_sudoku")
         # 选择返回
         if self.btn_back.is_clicked(pygame.mouse.get_pos()) == True:
             self.btn_back.color = color.GRAY
