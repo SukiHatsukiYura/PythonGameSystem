@@ -24,6 +24,7 @@ class ModeScene(scene.Scene):
 
     def draw(self):
         self.screen.fill(color.BLACK)  # 填充背景色
+        #pygame.draw.rect(self.screen, color.WHITE, (0, 0, 800, 633))  # 画出背景矩形
         pygame.display.set_caption(self.title)  #设置标题
         if self.bg_path:  # 判断是否有背景图片
             bg = pygame.image.load(self.bg_path)  # 加载背景图片

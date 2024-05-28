@@ -62,9 +62,12 @@ class Game2048(scene.Scene):
             self.high_scroe_6x6 = self.score_dict["high_scroe_6x6"]
 
         self.grid = [[0] * self.GRID_SIZE for _ in range(self.GRID_SIZE)]
-        self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 28)
+
+        self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 32)
+        self.text_sorce = pygame.font.Font(pygame.font.match_font("SimHei"),
+                                           24)
         self.grid_font = pygame.font.Font(pygame.font.match_font("SimHei"), 48)
-        self.screen = pygame.display.set_mode((600 + 50 + 200, 600 + 50))
+        self.screen = pygame.display.set_mode((600 + 50 + 200, 600 + 51))
         pygame.display.set_caption("2048")
         # 绘制按钮
         self.btn_back.draw(self.screen)
@@ -123,24 +126,24 @@ class Game2048(scene.Scene):
 
     def draw_score(self):
         # 绘制积分
-        score_text = self.text_font.render("当前分数:", True, (255,225,255))
-        score_text_num = self.text_font.render(str(self.score), True,
+        score_text = self.text_font.render("当前分数:", True, (255, 225, 255))
+        score_text_num = self.text_sorce.render(str(self.score), True,
                                                self.TEXT_COLOR)
         # 绘制最高分
 
         self.screen.blit(score_text, (660, 10))
         self.screen.blit(score_text_num, (660, 50))
 
-        self.screen.blit(self.text_font.render("最高分数:", True,(255,225,255)),
+        self.screen.blit(self.text_font.render("最高分数:", True, (255, 225, 255)),
                          (660, 90))
         self.screen.blit(
-            self.text_font.render("4x4:" + str(self.high_scroe_4x4).strip(),
+            self.text_sorce.render("4x4:" + str(self.high_scroe_4x4).strip(),
                                   True, self.TEXT_COLOR), (660, 130))
         self.screen.blit(
-            self.text_font.render("5x5:" + str(self.high_scroe_5x5).strip(),
+            self.text_sorce.render("5x5:" + str(self.high_scroe_5x5).strip(),
                                   True, self.TEXT_COLOR), (660, 170))
         self.screen.blit(
-            self.text_font.render("6x6:" + str(self.high_scroe_6x6).strip(),
+            self.text_sorce.render("6x6:" + str(self.high_scroe_6x6).strip(),
                                   True, self.TEXT_COLOR), (660, 210))
 
     def draw_text(self, screen, text, rect):
@@ -269,43 +272,18 @@ class Game2048(scene.Scene):
         return True
 
     def handle_event(self):
-        if self.btn_4x4.is_clicked(pygame.mouse.get_pos()) == True:
-            self.btn_4x4.color = (127, 127, 127)  # 设置按钮颜色为灰色
-            if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
-                self.restart("4x4")  # 切换到4x4游戏
-        else:
-            self.btn_4x4.color = (237, 224, 200)  # 恢复按钮颜色为白色
-        self.btn_4x4.draw(self.screen)  # 重新绘制4x4按钮
-        if self.btn_5x5.is_clicked(pygame.mouse.get_pos()) == True:
-            self.btn_5x5.color = (127, 127, 127)  # 设置按钮颜色为灰色
-            if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
-                self.restart("5x5")  # 切换到5x5游戏
-        else:
-            self.btn_5x5.color = (237, 224, 200)  # 恢复按钮颜色为白色
-        self.btn_5x5.draw(self.screen)  # 重新绘制5x5按钮
-        if self.btn_6x6.is_clicked(pygame.mouse.get_pos()) == True:
-            self.btn_6x6.color = (127, 127, 127)  # 设置按钮颜色为灰色
-            if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
-                self.restart("6x6")  # 切换到6x6游戏
-        else:
-            self.btn_6x6.color = (237, 224, 200)  # 恢复按钮颜色为白色
-        self.btn_6x6.draw(self.screen)  # 重新绘制6x6按钮
-        # 如果光标在返回按钮上，则设置按钮背景色为灰色，否则恢复为白色
-        if self.btn_back.is_clicked(pygame.mouse.get_pos()) == True:
-            self.btn_back.color = (127, 127, 127)  # 设置按钮颜色为灰色
-            if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
-                sm.scenemanager.change_scene("mode_scene")  # 切换到游戏场景
-        else:
-            self.btn_back.color = (237, 224, 200)  # 恢复按钮颜色为白色
-        self.btn_back.draw(self.screen)  # 重新绘制返回按钮
-        # 如果光标在重新开始按钮上，则设置按钮背景色为灰色，否则恢复为白色
-        if self.btn_restart.is_clicked(pygame.mouse.get_pos()) == True:
-            self.btn_restart.color = (127, 127, 127)  # 设置按钮颜色为灰色
-            if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
-                self.restart(self.mode)  # 重新开始游戏
-        else:
-            self.btn_restart.color = (237, 224, 200)  # 恢复按钮颜色为白色
-        self.btn_restart.draw(self.screen)  # 重新绘制重新开始按钮
+        #self.btn_click(self.btn_4x4, self.restart, "4x4")
+
+        # self.btn_click(self.btn_5x5, self.restart, "5x5")
+        # self.btn_click(self.btn_6x6, self.restart, "6x6")
+        # self.btn_click(self.btn_restart, self.restart, self.mode)
+        # self.btn_click(self.btn_back, sm.scenemanager.change_scene,"mode_scene")
+        self.btn_4x4.btn_click(self.screen, self.restart, "4x4")
+        self.btn_5x5.btn_click(self.screen, self.restart, "5x5")
+        self.btn_6x6.btn_click(self.screen, self.restart, "6x6")
+        self.btn_restart.btn_click(self.screen, self.restart, self.mode)
+        self.btn_back.btn_click(self.screen, sm.scenemanager.change_scene,
+                                "mode_scene")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sm.scenemanager.change_scene("mode_scene")  # 切换到游戏场景
@@ -324,7 +302,6 @@ class Game2048(scene.Scene):
                         self.move_tiles_down()
                         self.add_new_tile()  # 在移动后生成新数字块
                 else:
-                    #self.popup("游戏结束!\n是否重新开始?")  # 弹出提示框
                     if self.popup("游戏结束!", "是否重新开始?") == True:  # 重新开始游戏
                         self.restart()  # 重新开始游戏
                     else:
