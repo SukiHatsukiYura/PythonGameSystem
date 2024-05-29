@@ -35,9 +35,9 @@ class Game2048(scene.Scene):
                             (0, 0, 0), 32)
     btn_6x6 = button.Button(665, 410, 170, 60, (237, 224, 200), "6x6",
                             (0, 0, 0), 32)
-    btn_restart = button.Button(665, 490, 170, 60, (237, 224, 200), "重新开始",
+    btn_restart = button.Button(665, 490, 170, 60, (237, 224, 200), "新一局",
                                 (0, 0, 0), 32)
-    btn_back = button.Button(665, 570, 170, 60, (237, 224, 200), "返回",
+    btn_back = button.Button(665, 570, 170, 60, (237, 224, 200), "返 回",
                              (0, 0, 0), 32)
 
     def __init__(self):
@@ -100,7 +100,7 @@ class Game2048(scene.Scene):
         self.screen.fill(self.BACKGROUND_COLOR)
         self.draw_gird()
         self.draw_score()
-        self.draw_lines()
+        #self.draw_lines()
 
     def draw_gird(self):
         # 绘制格子
@@ -128,7 +128,7 @@ class Game2048(scene.Scene):
         # 绘制积分
         score_text = self.text_font.render("当前分数:", True, (255, 225, 255))
         score_text_num = self.text_sorce.render(str(self.score), True,
-                                               self.TEXT_COLOR)
+                                                self.TEXT_COLOR)
         # 绘制最高分
 
         self.screen.blit(score_text, (660, 10))
@@ -138,13 +138,13 @@ class Game2048(scene.Scene):
                          (660, 90))
         self.screen.blit(
             self.text_sorce.render("4x4:" + str(self.high_scroe_4x4).strip(),
-                                  True, self.TEXT_COLOR), (660, 130))
+                                   True, self.TEXT_COLOR), (660, 130))
         self.screen.blit(
             self.text_sorce.render("5x5:" + str(self.high_scroe_5x5).strip(),
-                                  True, self.TEXT_COLOR), (660, 170))
+                                   True, self.TEXT_COLOR), (660, 170))
         self.screen.blit(
             self.text_sorce.render("6x6:" + str(self.high_scroe_6x6).strip(),
-                                  True, self.TEXT_COLOR), (660, 210))
+                                   True, self.TEXT_COLOR), (660, 210))
 
     def draw_text(self, screen, text, rect):
         # 在单元格内绘制数字
@@ -309,7 +309,8 @@ class Game2048(scene.Scene):
 
     def popup(self, title, message):
         # 弹出提示框
-        return messagebox.askyesno(title, message)  # 返回True或False
+        return messagebox.askyesno(title, message,
+                                   icon='warning')  # 返回True或False
 
     def is_game_over(self):
         # 检查游戏是否结束（无法再移动数字块）

@@ -3,6 +3,7 @@ import start_scene
 import mode_scene
 import scene_2048
 import scene_sudoku
+import time
 
 
 class SceneManager:
@@ -19,6 +20,7 @@ class SceneManager:
     }
 
     current_scene = scene_dict["scene_sudoku"]()
+
     #current_scene = scene_dict["start_scene"]()
 
     def change_scene(self, scene_name):

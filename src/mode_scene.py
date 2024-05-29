@@ -12,14 +12,14 @@ class ModeScene(scene.Scene):
     icon_2048 = "img/2048.jpg"
     icon_sudoku = "img/sudoku.jpg"
     icon_gobang = "img/gobang.jpg"
-    
+
     btn_2048 = button.Button(200, 50, 500, 100, color.WHITE, "2048",
                              color.BLACK, 50)
     btn_gobang = button.Button(200, 175, 500, 100, color.WHITE, "五子棋",
                                color.BLACK, 50)
     btn_sudoku = button.Button(200, 300, 500, 100, color.WHITE, "数独",
                                color.BLACK, 50)
-    btn_back = button.Button(50, 450, 200, 100, color.WHITE, "返回",
+    btn_back = button.Button(50, 450, 200, 100, color.WHITE, "返 回",
                              color.BLACK, 50)
 
     def draw(self):
@@ -43,7 +43,9 @@ class ModeScene(scene.Scene):
 
     def handle_event(self):  #处理事件
         # 选择跳转2048游戏
-        self.btn_2048.btn_click(self.screen,scene_manager.scenemanager.change_scene,"scene_2048")
+        self.btn_2048.btn_click(self.screen,
+                                scene_manager.scenemanager.change_scene,
+                                "scene_2048")
         # 选择跳转五子棋游戏
         if self.btn_gobang.is_clicked(pygame.mouse.get_pos()) == True:
             self.btn_gobang.color = color.GRAY
@@ -53,10 +55,12 @@ class ModeScene(scene.Scene):
                     exit()
         else:
             self.btn_gobang.color = color.WHITE
-        self.btn_gobang.draw(self.screen,120)
+        self.btn_gobang.draw(self.screen, 120)
 
         # 选择跳转数独游戏
-        self.btn_sudoku.btn_click(self.screen,scene_manager.scenemanager.change_scene,"scene_sudoku")
+        self.btn_sudoku.btn_click(self.screen,
+                                  scene_manager.scenemanager.change_scene,
+                                  "scene_sudoku")
         # 选择返回
         if self.btn_back.is_clicked(pygame.mouse.get_pos()) == True:
             self.btn_back.color = color.GRAY
@@ -65,4 +69,4 @@ class ModeScene(scene.Scene):
                     scene_manager.scenemanager.change_scene("start_scene")
         else:
             self.btn_back.color = color.WHITE
-        self.btn_back.draw(self.screen,120)
+        self.btn_back.draw(self.screen, 120)
