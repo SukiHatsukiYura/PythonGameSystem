@@ -2,7 +2,7 @@ import pygame
 import scene
 import scene_manager as sm
 import random
-import time
+import copy
 
 
 # 定义GameSudoku类，继承自scene.Scene
@@ -17,6 +17,9 @@ class GameSudoku(scene.Scene):
     GRID_LINE_COLOR_1: tuple  # 网格线颜色1
     GRID_LINE_COLOR_2: tuple  # 网格线颜色2
     SELECT_COLOR: tuple  # 选中格子颜色
+    SELECT_NUM_COLOR: tuple  # 选中数字颜色
+    FILLTRUE_NUM_COLOR: tuple  # 填入正确数字的颜色
+    FILLFALSI_NUM_COLOR: tuple  # 填入错误数字的颜色
     num_color: tuple  # 数字颜色
     num_font = pygame.font.Font(pygame.font.match_font("SimHei"), 48)
     number_list: list  # 数字列表
@@ -30,14 +33,20 @@ class GameSudoku(scene.Scene):
         self.GRID_LINE_COLOR_1 = (200, 200, 200)
         self.GRID_LINE_COLOR_2 = (0, 0, 0)
         self.SELECT_COLOR = (255, 225, 255)
+        self.SELECT_NUM_COLOR = (0, 0, 255)
+        self.FILLTRUE_NUM_COLOR = (0, 255, 0)
+        self.FILLFALSI_NUM_COLOR = (255, 0, 0)
         self.num_color = (0, 0, 0)
         self.last_grid = (0, 0)
         self.current_grid = (0, 0)
         self.number_list = [[0 for _ in range(9)] for _ in range(9)]
+        self.number_bak_list = [[0 for _ in range(9)] for _ in range(9)]
         self.last_grid
         self.current_grid
         self.generate_sudoku()
+        self.number_com_list = copy.deepcopy(self.number_list)
         self.remove_cells('medium')
+        self.number_bak_list = copy.deepcopy(self.number_list)
         # 数独界面大小(9*50+2*(9+1),9*50+2*(9+1))=(470,470)
         self.size = (
             (self.GRID_SIZE * self.GRID_WH) + self.LINE_W *
@@ -56,8 +65,8 @@ class GameSudoku(scene.Scene):
         #self.screen.blit(self.selected_surface, (2, 2))  # 绘制选中格子的效果
 
         self.draw_line()  # 绘制网格线
-        self.draw_number()  # 绘制数字
         self.draw_grid()  # 绘制当前选择格子的效果
+        self.draw_number()  # 绘制数字
 
     def draw_line(self):
         # 绘制游戏网格的水平和垂直线条
@@ -92,81 +101,96 @@ class GameSudoku(scene.Scene):
                                   i * self.GRID_WH + self.LINE_W * i),
                                  self.LINE_W)
 
+    def check_number_color(self, x, y):
+        pass
+
+    # 随机生成数独
     # 绘制数字
     def draw_number(self):
-        # 绘制数独中的数字
+        y, x = self.current_grid
+        if self.number_list[x][y] != 0:
+            # 绘制数独中的数字
+            for i in range(9):
+                for j in range(9):
+                    color = self.num_color
+                    # 绘制已填入格子的数字
+                    if self.number_list[i][j] != 0:
+                        if self.number_list[x][y] == self.number_list[i][j]:
+                            color = self.SELECT_NUM_COLOR
+                        elif self.number_bak_list[x][y] != 0:
+                            color = self.num_color
+                        self.text_draw(i, j, color)
+
+        if self.number_list[x][y] == 0:
+            # 绘制空白格子的数字
+            for i in range(9):
+                for j in range(9):
+                    color = self.num_color
+                    if self.number_bak_list[i][j] == 0:
+                        if self.number_list[x][y] == self.number_com_list[i][
+                                j]:
+                            color = self.FILLTRUE_NUM_COLOR
+                        elif self.number_list[x][
+                                y] != 0 and self.number_bak_list[x][y] == 0:
+                            color = self.FILLFALSI_NUM_COLOR
+                        else:
+                            color = self.num_color
+
+                    self.text_draw(i, j, color)
+
+    # 数字位置和绘制
+    def text_draw(self, x, y, color):
+        text = self.num_font.render(str(self.number_list[x][y]), True, color)
+        text_rect = text.get_rect()
+        # 设置文本的位置
+        text_rect.center = ((y + 0.5) * self.GRID_WH + self.LINE_W * (y + 1),
+                            (x + 0.5) * self.GRID_WH + self.LINE_W * (x + 1))
+        # 在屏幕上绘制文本
+        self.screen.blit(text, text_rect)
+
+    #绘制选中格子所在的九宫格和行列
+    def draw_selected_grid(self, x, y):
+        self.screen.blit(self.selected_surface,
+                         ((y + 0.5) * self.GRID_WH + self.LINE_W *
+                          (y + 1) - self.GRID_WH / 2,
+                          (x + 0.5) * self.GRID_WH + self.LINE_W *
+                          (x + 1) - self.GRID_WH / 2))  # 绘制选中格子的效果
+        subgrid_row, subgrid_col = 3 * (x // 3), 3 * (y // 3)
+        for i in range(3):
+            for j in range(3):
+                grid_x = subgrid_row + i
+                grid_y = subgrid_col + j
+                if grid_x != x or grid_y != y:
+                    self.screen.blit(
+                        self.selected_surface,
+                        ((grid_y + 0.5) * self.GRID_WH + self.LINE_W *
+                         (grid_y + 1) - self.GRID_WH / 2,
+                         (grid_x + 0.5) * self.GRID_WH + self.LINE_W *
+                         (grid_x + 1) - self.GRID_WH / 2))  # 绘制选中格子的效果
         for i in range(9):
-            for j in range(9):
-                # 如果该位置上的数字不为0，则绘制数字
-                if self.number_list[i][j] != 0:
-                    # 创建文本对象
-                    text = self.num_font.render(str(self.number_list[i][j]),
-                                                True, self.num_color)
-                    text_rect = text.get_rect()
-                    # 设置文本的位置
-                    text_rect.center = ((j + 0.5) * self.GRID_WH +
-                                        self.LINE_W * (j + 1),
-                                        (i + 0.5) * self.GRID_WH +
-                                        self.LINE_W * (i + 1))
-                    # 在屏幕上绘制文本
-                    self.screen.blit(text, text_rect)
+            # 绘制纵向格子的效果
+            if i != x:
+                self.screen.blit(self.selected_surface,
+                                 ((y + 0.5) * self.GRID_WH + self.LINE_W *
+                                  (y + 1) - self.GRID_WH / 2,
+                                  (i + 0.5) * self.GRID_WH + self.LINE_W *
+                                  (i + 1) - self.GRID_WH / 2))
+            # 绘制横向格子的效果
+            if i != y:
+                self.screen.blit(self.selected_surface,
+                                 ((i + 0.5) * self.GRID_WH + self.LINE_W *
+                                  (i + 1) - self.GRID_WH / 2,
+                                  (x + 0.5) * self.GRID_WH + self.LINE_W *
+                                  (x + 1) - self.GRID_WH / 2))
 
     # 绘制当前选择格子的效果
     def draw_grid(self):
-        #清除上一次选中的格子效果
+        # #清除上一次选中的格子效果
         last_y, last_x = self.last_grid
-        if self.number_list[last_x][last_y] != 0:
-            for x in range(self.GRID_SIZE):
-                for y in range(self.GRID_SIZE):
-                    if self.number_list[x][y] == self.number_list[last_x][
-                            last_y]:
-                        self.screen.blit(
-                            self.selected_surface,
-                            ((y + 0.5) * self.GRID_WH + self.LINE_W *
-                             (y + 1) - self.GRID_WH / 2,
-                             (x + 0.5) * self.GRID_WH + self.LINE_W *
-                             (x + 1) - self.GRID_WH / 2))  # 绘制选中格子的效果
-        else:
-            last_x = (last_x + 0.5) * self.GRID_WH + self.LINE_W * (last_x + 1)
-            last_y = (last_y + 0.5) * self.GRID_WH + self.LINE_W * (last_y + 1)
-            self.screen.blit(self.selected_surface,
-                             (last_y - self.GRID_WH / 2,
-                              last_x - self.GRID_WH / 2))  # 绘制选中格子的效果
-
-        # 绘制当前选择格子的效果
+        self.draw_selected_grid(last_x, last_y)
+        # # 绘制当前选择格子的效果
         current_y, current_x = self.current_grid
-        if self.number_list[current_x][current_y] != 0:
-            for x in range(self.GRID_SIZE):
-                for y in range(self.GRID_SIZE):
-                    if self.number_list[x][y] == self.number_list[current_x][
-                            current_y]:
-                        self.screen.blit(
-                            self.selected_surface,
-                            ((y + 0.5) * self.GRID_WH + self.LINE_W *
-                             (y + 1) - self.GRID_WH / 2,
-                             (x + 0.5) * self.GRID_WH + self.LINE_W *
-                             (x + 1) - self.GRID_WH / 2))  # 绘制选中格子的效果
-                        snum_color = (255, 0, 0)
-
-                        # 创建文本对象
-                        text = self.num_font.render(
-                            str(self.number_list[x][y]), True, snum_color)
-                        text_rect = text.get_rect()
-                        # 设置文本的位置
-                        text_rect.center = ((y + 0.5) * self.GRID_WH +
-                                            self.LINE_W * (y + 1),
-                                            (x + 0.5) * self.GRID_WH +
-                                            self.LINE_W * (x + 1))
-                        # 在屏幕上绘制文本
-                        self.screen.blit(text, text_rect)
-        else:
-            current_x = (current_x +
-                         0.5) * self.GRID_WH + self.LINE_W * (current_x + 1)
-            current_y = (current_y +
-                         0.5) * self.GRID_WH + self.LINE_W * (current_y + 1)
-            self.screen.blit(self.selected_surface,
-                             (current_y - self.GRID_WH / 2,
-                              current_x - self.GRID_WH / 2))  # 绘制选中格子的效果
+        self.draw_selected_grid(current_x, current_y)
 
     # 处理事件
     def handle_event(self):
@@ -190,8 +214,29 @@ class GameSudoku(scene.Scene):
                 sm.scenemanager.change_scene("mode_scene")  # 切换场景为模式场景
             if event.type == pygame.MOUSEBUTTONDOWN and x < 9 and y < 9:  # 如果事件为鼠标按下事件且位置在有效区域内
                 self.current_grid = (x, y)  # 更新当前选择的格子位置
-                print(self.current_grid)
                 self.last_grid = self.current_grid  # 更新上一次选中的格子位置
+            if event.type == pygame.KEYUP:
+                if self.number_bak_list[y][x] == 0:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.number_list[y][x] = 0
+                    if event.key == pygame.K_1:
+                        self.number_list[y][x] = 1
+                    if event.key == pygame.K_2:
+                        self.number_list[y][x] = 2
+                    if event.key == pygame.K_3:
+                        self.number_list[y][x] = 3
+                    if event.key == pygame.K_4:
+                        self.number_list[y][x] = 4
+                    if event.key == pygame.K_5:
+                        self.number_list[y][x] = 5
+                    if event.key == pygame.K_6:
+                        self.number_list[y][x] = 6
+                    if event.key == pygame.K_7:
+                        self.number_list[y][x] = 7
+                    if event.key == pygame.K_8:
+                        self.number_list[y][x] = 8
+                    if event.key == pygame.K_9:
+                        self.number_list[y][x] = 9
 
     # 数独的生成算法：
     # 1. 随机填充数字，直到没有唯一解

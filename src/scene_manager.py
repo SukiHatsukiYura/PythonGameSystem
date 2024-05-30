@@ -3,6 +3,7 @@ import start_scene
 import mode_scene
 import scene_2048
 import scene_sudoku
+import scene_sudoku2
 import time
 
 
@@ -16,10 +17,11 @@ class SceneManager:
         "start_scene": start_scene.StartScene,  #开始场景
         "mode_scene": mode_scene.ModeScene,  #模式选择场景
         "scene_2048": scene_2048.Game2048,  #2048游戏场景
-        "scene_sudoku": scene_sudoku.GameSudoku  #数独游戏场景
+        "scene_sudoku": scene_sudoku.GameSudoku,  #数独游戏场景
+        "scene_sudoku2": scene_sudoku2.GameSudoku2  #数独游戏场景2
     }
 
-    current_scene = scene_dict["scene_sudoku"]()
+    current_scene = scene_dict["scene_sudoku2"]()
 
     #current_scene = scene_dict["start_scene"]()
 
