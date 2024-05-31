@@ -35,6 +35,8 @@ class GridRect():
 
 
 class GameSudoku2(scene.Scene):
+    GridEntireSideLength = 650 # 数独整个网格边长,包括网格宽度
+    ControlRegionWidth = 150 # 控制区域大小
     size = (650 + 150, 650)
 
     def __init__(self):
@@ -50,7 +52,7 @@ class GameSudoku2(scene.Scene):
         self.remove_cells('easy')  # 移除一些单元格，使数独难度变为简单
         self.NumberCpoy = copy.deepcopy(self.Number)  #保存当前数独的难度版本(即移除的单元格)
 
-        # 定义9x9的格子矩阵
+        # 定义9x9的格子矩阵,存放81个矩形(格子)对象
         self.GridRect81 = [[None for _ in range(9)] for _ in range(9)]
 
         super().__init__()
