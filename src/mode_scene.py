@@ -2,16 +2,23 @@ import pygame
 import scene
 import button
 import scene_manager
+import scene_sudoku2
 from colorRGB import color
 
 
 class ModeScene(scene.Scene):
     size = (800, 633)
+
     title = "ModeScene"
     bg_path = "img/bg.jpg"
     icon_2048 = "img/2048.jpg"
     icon_sudoku = "img/sudoku.jpg"
     icon_gobang = "img/gobang.jpg"
+
+    def __init__(self):
+        super().__init__()
+        bg = pygame.image.load(self.bg_path).convert()  # 加载背景图片
+        self.scaled_bg = pygame.transform.smoothscale(bg, self.size)  # 缩放背景图片
 
     btn_2048 = button.Button(200, 50, 500, 100, color.WHITE, "2048",
                              color.BLACK, 50)
@@ -24,12 +31,8 @@ class ModeScene(scene.Scene):
 
     def draw(self):
         self.screen.fill(color.BLACK)  # 填充背景色
-        #pygame.draw.rect(self.screen, color.WHITE, (0, 0, 800, 633))  # 画出背景矩形
+        self.screen.blit(self.scaled_bg, (0, 0))
         pygame.display.set_caption(self.title)  #设置标题
-        if self.bg_path:  # 判断是否有背景图片
-            bg = pygame.image.load(self.bg_path)  # 加载背景图片
-            self.screen.blit(self.screen, (0, 0))
-            self.screen.blit(bg, (0, 0))
         self.screen.blit(pygame.image.load(self.icon_2048),
                          (50, 50))  # 加载2048图标
         self.screen.blit(pygame.image.load(self.icon_sudoku),
@@ -60,7 +63,7 @@ class ModeScene(scene.Scene):
         # 选择跳转数独游戏
         self.btn_sudoku.btn_click(self.screen,
                                   scene_manager.scenemanager.change_scene,
-                                  "scene_sudoku")
+                                  "scene_sudoku2")
         # 选择返回
         if self.btn_back.is_clicked(pygame.mouse.get_pos()) == True:
             self.btn_back.color = color.GRAY
@@ -70,3 +73,7 @@ class ModeScene(scene.Scene):
         else:
             self.btn_back.color = color.WHITE
         self.btn_back.draw(self.screen, 120)
+
+        if pygame.event.poll().type == pygame.KEYDOWN:
+            if pygame.key.get_pressed()[pygame.K_ESCAPE]:  # 按下ESC键
+                scene_manager.scenemanager.change_scene("start_scene")

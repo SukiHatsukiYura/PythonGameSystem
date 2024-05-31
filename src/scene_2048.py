@@ -12,6 +12,7 @@ import json
 class Game2048(scene.Scene):
 
     # 定义属性
+    size = (600 + 50 + 200, 600 + 51)
     GRID_SIZE: int  # 格子数量
     CELL_SIZE: int  # 格子大小(正方形)
     GRID_WIDTH: int  # 格子宽度
@@ -67,7 +68,8 @@ class Game2048(scene.Scene):
         self.text_sorce = pygame.font.Font(pygame.font.match_font("SimHei"),
                                            24)
         self.grid_font = pygame.font.Font(pygame.font.match_font("SimHei"), 48)
-        self.screen = pygame.display.set_mode((600 + 50 + 200, 600 + 51))
+        #self.screen = pygame.display.set_mode(self.size)
+        super().__init__()
         pygame.display.set_caption("2048")
         # 绘制按钮
         self.btn_back.draw(self.screen)
@@ -96,7 +98,7 @@ class Game2048(scene.Scene):
         self.add_new_tile()
         self.add_new_tile()
 
-    def draw(self):
+    def draw(self):        
         self.screen.fill(self.BACKGROUND_COLOR)
         self.draw_gird()
         self.draw_score()

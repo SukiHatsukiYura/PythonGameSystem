@@ -1,5 +1,6 @@
 import pygame
 
+
 class Scene:
 
     screen = None  # 场景对象
@@ -25,5 +26,3 @@ class Scene:
         处理事件
         """
         pass
-
-

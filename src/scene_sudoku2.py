@@ -25,19 +25,24 @@ class GridRect():
         self.num_font = pygame.font.Font(pygame.font.match_font("SimHei"),
                                          48)  #设置数字字体
         self.text_color = (0, 0, 0)  #矩形内文本颜色
-    
-    def draw(self, screen, sudoku):
+
+    def draw(self, screen, number):
+        # 绘制矩形
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.w, self.h))
-        text = self.num_font.render(str(sudoku), True, self.text_color)
-        text_rect = text.get_rect()
-        text_rect.center = (self.x + self.w / 2, self.y + self.h / 2)
-        screen.blit(text, text_rect)
+        # 转换数字为对象
+        if self.num != 0:
+            text = self.num_font.render(str(number), True, self.text_color)
+            text_rect = text.get_rect()
+            # 设置文本位置居中
+            text_rect.center = (self.x + self.w / 2, self.y + self.h / 2)
+            # 如果 self.num 不等于0，则将 text 渲染到屏幕上的 text_rect 位置
+            screen.blit(text, text_rect)
 
 
 class GameSudoku2(scene.Scene):
-    GridEntireSideLength = 650 # 数独整个网格边长,包括网格宽度
-    ControlRegionWidth = 150 # 控制区域大小
-    size = (650 + 150, 650)
+    GridSideLength = 650  # 数独整个网格边长,包括网格宽度
+    RegionWidth = 150  # 控制区域大小
+    size = (GridSideLength + RegionWidth, GridSideLength)  # 窗口大小
 
     def __init__(self):
         # 定义游戏网格相关参数
@@ -45,6 +50,8 @@ class GameSudoku2(scene.Scene):
         self.GridLineWidth = 2  # 网格线条宽度
         self.GridLineColor_Black = (0, 0, 0)  # 网格线条颜色-黑色
         self.GridLineColor_Gray = (200, 200, 200)  # 网格线条颜色-灰色
+        self.SELECT_COLOR = (255, 225, 255)  # 选中格子颜色
+        self.UNSELECT_COLOR = (255, 255, 255)  # 未选中格子颜色
         # 定义游戏数字相关参数
         self.Number = [[0 for _ in range(9)] for _ in range(9)]  # 9x9的数字矩阵
         self.generate_sudoku()  # 生成数独
@@ -52,26 +59,23 @@ class GameSudoku2(scene.Scene):
         self.remove_cells('easy')  # 移除一些单元格，使数独难度变为简单
         self.NumberCpoy = copy.deepcopy(self.Number)  #保存当前数独的难度版本(即移除的单元格)
 
-        # 定义9x9的格子矩阵,存放81个矩形(格子)对象
-        self.GridRect81 = [[None for _ in range(9)] for _ in range(9)]
-
-        super().__init__()
+        # 定义9x9的格子矩阵,存放81个矩形(格子)对象,每个网格的边长为70像素,网格线条宽度为2像素,网格颜色为白色
+        self.GridRect81 = [[
+            GridRect(x * self.GridSize70 + 2 * (x + 1),
+                     y * self.GridSize70 + 2 * (y + 1), self.GridSize70,
+                     self.GridSize70, (255, 255, 255)) for y in range(9)
+        ] for x in range(9)]
+        super().__init__()  #窗口初始化
+        self.screen.fill((255, 255, 255))  # 填充背景颜色
         pygame.display.set_caption("数独")  # 设置标题
-        # 定义游戏网格,每个网格的边长为70像素,网格线条宽度为2像素,网格颜色为白色
-        for x in range(9):
-            for y in range(9):
-                self.GridRect81[x][y] = GridRect(
-                    x * self.GridSize70 + 2 * (x + 1),
-                    y * self.GridSize70 + 2 * (y + 1), self.GridSize70,
-                    self.GridSize70, (255, 255, 255))
         self.CurrentGrid = self.GridRect81[4][4]  # 保存当前选中的格子坐标
-        self.LastGrid = self.CurrentGrid  # 保存上一次选中的格子坐标
 
     def draw(self):
         self.screen.fill((255, 255, 255))
-        self.draw_grid()
+        self.draw_selected_grid()
         self.draw_number()
         self.draw_line()
+
     def draw_line(self):
         # 绘制游戏网格的水平和垂直线条
         for i in range(10):
@@ -104,51 +108,70 @@ class GameSudoku2(scene.Scene):
                      i * self.GridSize70 + self.GridLineWidth * i),
                     self.GridLineWidth)
 
+    # 更改数字颜色
     def draw_number(self):
-        # 绘制游戏数字
-        for x in range(9):
-            for y in range(9):
-                if self.Number[x][y] != 0:
-                    self.GridRect81[x][y].num = self.Number[x][y]
-                    self.GridRect81[x][y].draw(self.screen, self.Number[x][y])
+        # # 选中的格子数字，难度选择后的版本，不会被修改
+        # numcop = self.NumberCpoy[self.CurrentGrid.col][
+        #     self.CurrentGrid.row]
+        # # 选中的格子数字，当前版本，会被修改
+        # number = self.Number[self.CurrentGrid.col][self.CurrentGrid.row]
+        # # 选中的格子数字，完整版本，不会被修改
+        # numcom = self.NumberCompare[self.CurrentGrid.col][
+        #     self.CurrentGrid.row]
+        # # 选中的格子对象的数字
+        # numtext = self.GridRect81[self.CurrentGrid.col][
+        #     self.CurrentGrid.row]
+        if self.CurrentGrid is None:
+            for i in range(9):
+                for j in range(9):
+                    self.GridRect81[i][j].text_color = (0, 0, 0)
+                    self.GridRect81[i][j].draw(self.screen, self.Number[i][j])
+        else:
+            for i in range(9):
+                for j in range(9):
+                    num = self.Number[i][j]
+                    grid = self.GridRect81[i][j]
+                    if num != 0:
+                        if num == self.CurrentGrid.num:
+                            grid.text_color = (0, 0, 255)
+                        else:
+                            grid.text_color = (0, 0, 0)
+                        grid.num = num
+                        grid.draw(self.screen, num)
+                    else:
+                        grid.num = 0
+                        grid.draw(self.screen, num)
 
-    #绘制选中格子所在的九宫格和行列
+                    if num == self.Number[self.CurrentGrid.col][self.CurrentGrid.row]:
+                        if self.NumberCpoy[i][j] == 0:
+                            pass
+
+
+
+
+    # 更改选中格子所在的九宫格和行列的格子颜色
     def draw_selected_grid(self):
-
-        self.LastGrid.color = (255, 255, 255)
-        #绘制选中格子所在的九宫格
-        subgrid_row, subgrid_col = 3 * (self.CurrentGrid.row //
-                                        3), 3 * (self.CurrentGrid.col // 3)
-        for i in range(3):
-            for j in range(3):
-                self.GridRect81[subgrid_row + i][subgrid_col + j].color = (255,
-                                                                           255,
-                                                                           255)
-        #绘制选中格子所在的行列
+        if self.CurrentGrid is None:
+            for i in range(9):
+                for j in range(9):
+                    self.GridRect81[i][j].color = self.UNSELECT_COLOR
+            return
         for i in range(9):
-            self.GridRect81[i][self.CurrentGrid.col].color = (255, 255, 255)
-            self.GridRect81[self.CurrentGrid.row][i].color = (255, 255, 255)
-        #self.CurrentGrid.color = (255, 0, 0)
-        #绘制当前选中格子所在的九宫格
-        subgrid_row, subgrid_col = 3 * (self.CurrentGrid.row //
-                                        3), 3 * (self.CurrentGrid.col // 3)
-        for i in range(3):
-            for j in range(3):
-                self.GridRect81[subgrid_row + i][subgrid_col + j].color = (255,
-                                                                           0,
-                                                                           0)
-        #绘制当前选中格子所在的行列
+            for j in range(9):
+                self.GridRect81[i][j].color = self.UNSELECT_COLOR
         for i in range(9):
-            self.GridRect81[i][self.CurrentGrid.col].color = (255, 0, 0)
-            self.GridRect81[self.CurrentGrid.row][i].color = (255, 0, 0)
-        self.GridRect81[self.CurrentGrid.row][self.CurrentGrid.col].color = (
-            255, 0, 0)
+            for j in range(9):
+                if j // 3 == self.CurrentGrid.row // 3 and i // 3 == self.CurrentGrid.col // 3:
+                    self.GridRect81[i][j].color = self.SELECT_COLOR
+                else:
+                    self.GridRect81[i][j].color = self.UNSELECT_COLOR
+        # 优化绘制纵向格子的效果
+        for grid in self.GridRect81[self.CurrentGrid.col]:
+            grid.color = self.SELECT_COLOR
 
-    # 绘制当前选择格子的效果
-    def draw_grid(self):
-        self.draw_selected_grid()
-        # self.draw_selected_grid(self.LastGrid)
-        # self.draw_selected_grid(self.CurrentGrid)
+        # 优化绘制横向格子的效果
+        for i in range(9):
+            self.GridRect81[i][self.CurrentGrid.row].color = self.SELECT_COLOR
 
     def handle_event(self):
 
@@ -156,7 +179,7 @@ class GameSudoku2(scene.Scene):
         pos = pygame.mouse.get_pos()  # 获取鼠标位置
         x, y = pos
         # 根据鼠标位置判断操作所在的区域
-        if (x > 2 and y > 2) or (x < 650 - 2 + 150 and y < 650):  # 有效区域
+        if (x > 2 and y > 2) or (x < 650 - 2 + 150 and y < 650 - 2):  # 有效区域
             x_index = (x + self.GridLineWidth) // self.GridSize70
             y_index = (y + self.GridLineWidth) // self.GridSize70
             x = (x - (x_index * self.GridLineWidth)) // self.GridSize70
@@ -164,41 +187,40 @@ class GameSudoku2(scene.Scene):
         else:
             x = 0
             y = 0
-
         for event in pygame.event.get():  # 遍历所有事件
 
             if event.type == pygame.QUIT:  # 事件为退出事件
                 sm.scenemanager.change_scene("mode_scene")  # 切换场景为模式场景
-            if event.type == pygame.MOUSEBUTTONDOWN and x < 9 and y < 9:  # 鼠标按下事件且位置在有效区域内
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and x < 9 and y < 9:  # 鼠标按下事件且位置在有效区域内
                 self.CurrentGrid = self.GridRect81[x][y]  # 记录当前选中的格子坐标
                 print("当前选中的格子坐标：", self.CurrentGrid.row, self.CurrentGrid.col)
-            if event.type == pygame.MOUSEBUTTONUP and x < 9 and y < 9:  # 鼠标松开事件且位置在有效区域内
-                self.LastGrid = self.CurrentGrid  # 记录上一次选中的格子坐标
-                #print(x, y)
-                print("上次选中的格子坐标：", self.LastGrid.row, self.LastGrid.col)
-
-            if event.type == pygame.KEYUP:
-                if self.GridRect81[x][y].num == 0:
-                    if event.key == pygame.K_BACKSPACE:
-                        self.Number[x][y] = 0
-                    if event.key == pygame.K_1:
-                        self.Number[x][y] = 1
-                    if event.key == pygame.K_2:
-                        self.Number[x][y] = 2
-                    if event.key == pygame.K_3:
-                        self.Number[x][y] = 3
-                    if event.key == pygame.K_4:
-                        self.Number[x][y] = 4
-                    if event.key == pygame.K_5:
-                        self.Number[x][y] = 5
-                    if event.key == pygame.K_6:
-                        self.Number[x][y] = 6
-                    if event.key == pygame.K_7:
-                        self.Number[x][y] = 7
-                    if event.key == pygame.K_8:
-                        self.Number[x][y] = 8
-                    if event.key == pygame.K_9:
-                        self.Number[x][y] = 9
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and x >= 9:  # 鼠标按下事件且位置不在有效区域内
+                self.CurrentGrid = None  # 记录当前选中的格子坐标为None
+                print("格子坐标:", x, y)
+            if x < 9 and y < 9:  # 有效区域内的按键事件
+                if self.NumberCpoy[x][y] == 0:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_BACKSPACE:
+                            self.Number[x][y] = 0
+                        if event.key == pygame.K_1:
+                            self.Number[x][y] = 1
+                        if event.key == pygame.K_2:
+                            self.Number[x][y] = 2
+                        if event.key == pygame.K_3:
+                            self.Number[x][y] = 3
+                        if event.key == pygame.K_4:
+                            self.Number[x][y] = 4
+                        if event.key == pygame.K_5:
+                            self.Number[x][y] = 5
+                        if event.key == pygame.K_6:
+                            self.Number[x][y] = 6
+                        if event.key == pygame.K_7:
+                            self.Number[x][y] = 7
+                        if event.key == pygame.K_8:
+                            self.Number[x][y] = 8
+                        if event.key == pygame.K_9:
+                            self.Number[x][y] = 9
 
     # 数独的生成算法：
 
