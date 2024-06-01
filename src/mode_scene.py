@@ -2,7 +2,7 @@ import pygame
 import scene
 import button
 import scene_manager
-import scene_sudoku2
+import scene_sudoku
 from colorRGB import color
 
 
@@ -32,19 +32,19 @@ class ModeScene(scene.Scene):
     def draw(self):
         self.screen.fill(color.BLACK)  # 填充背景色
         self.screen.blit(self.scaled_bg, (0, 0))
-        pygame.display.set_caption(self.title)  #设置标题
+        pygame.display.set_caption(self.title)  # 设置标题
         self.screen.blit(pygame.image.load(self.icon_2048),
                          (50, 50))  # 加载2048图标
         self.screen.blit(pygame.image.load(self.icon_sudoku),
                          (50, 175))  # 加载数独图标
         self.screen.blit(pygame.image.load(self.icon_gobang),
                          (50, 300))  # 加载五子棋图标
-        self.btn_2048.draw(self.screen, 120)  #画出2048按钮
-        self.btn_gobang.draw(self.screen, 120)  #画出五子棋按钮
-        self.btn_sudoku.draw(self.screen, 120)  #画出数独按钮
-        self.btn_back.draw(self.screen, 120)  #画出返回按钮
+        self.btn_2048.draw(self.screen, 120)  # 画出2048按钮
+        self.btn_gobang.draw(self.screen, 120)  # 画出五子棋按钮
+        self.btn_sudoku.draw(self.screen, 120)  # 画出数独按钮
+        self.btn_back.draw(self.screen, 120)  # 画出返回按钮
 
-    def handle_event(self):  #处理事件
+    def handle_event(self):  # 处理事件
         # 选择跳转2048游戏
         self.btn_2048.btn_click(self.screen,
                                 scene_manager.scenemanager.change_scene,
@@ -63,7 +63,7 @@ class ModeScene(scene.Scene):
         # 选择跳转数独游戏
         self.btn_sudoku.btn_click(self.screen,
                                   scene_manager.scenemanager.change_scene,
-                                  "scene_sudoku2")
+                                  "scene_sudoku")
         # 选择返回
         if self.btn_back.is_clicked(pygame.mouse.get_pos()) == True:
             self.btn_back.color = color.GRAY

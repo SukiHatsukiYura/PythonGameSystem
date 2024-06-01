@@ -40,6 +40,7 @@ class Game2048(scene.Scene):
                                 (0, 0, 0), 32)
     btn_back = button.Button(665, 570, 170, 60, (237, 224, 200), "返 回",
                              (0, 0, 0), 32)
+    icon_path = "img/2048.jpg"
 
     def __init__(self):
         # 初始化游戏属性
@@ -70,7 +71,9 @@ class Game2048(scene.Scene):
         self.grid_font = pygame.font.Font(pygame.font.match_font("SimHei"), 48)
         # self.screen = pygame.display.set_mode(self.size)
         super().__init__()
-        pygame.display.set_caption("2048")
+        self.title = "2048"
+        self.icon = pygame.image.load(self.icon_path)
+        pygame.display.set_icon(self.icon)
         # 绘制按钮
         self.btn_back.draw(self.screen)
         self.btn_restart.draw(self.screen)
@@ -99,6 +102,7 @@ class Game2048(scene.Scene):
         self.add_new_tile()
 
     def draw(self):
+        pygame.display.set_caption("2048")
         self.screen.fill(self.BACKGROUND_COLOR)
         self.draw_gird()
         self.draw_score()
