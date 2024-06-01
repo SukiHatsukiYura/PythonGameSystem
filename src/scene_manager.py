@@ -21,6 +21,7 @@ class SceneManager:
     }
 
     current_scene = scene_dict["scene_sudoku2"]
+
     # current_scene = scene_dict["start_scene"]
     # pygame.display.set_mode((800, 633))
     def change_scene(self, scene_name):
@@ -28,7 +29,7 @@ class SceneManager:
         切换场景
         """
         self.current_scene = self.scene_dict[scene_name]
-        if scene_name == "start_scene" or scene_name == "mode_scene":
+        if scene_name == "mode_scene":
             pygame.display.set_mode((800, 633))
         if scene_name == "scene_2048":
             pygame.display.set_mode(self.current_scene.size)

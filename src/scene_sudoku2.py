@@ -110,17 +110,6 @@ class GameSudoku2(scene.Scene):
 
     # 更改数字颜色
     def draw_number(self):
-        # # 选中的格子数字，难度选择后的版本，不会被修改
-        # numcop = self.NumberCpoy[self.CurrentGrid.col][
-        #     self.CurrentGrid.row]
-        # # 选中的格子数字，当前版本，会被修改
-        # number = self.Number[self.CurrentGrid.col][self.CurrentGrid.row]
-        # # 选中的格子数字，完整版本，不会被修改
-        # numcom = self.NumberCompare[self.CurrentGrid.col][
-        #     self.CurrentGrid.row]
-        # # 选中的格子对象的数字
-        # numtext = self.GridRect81[self.CurrentGrid.col][
-        #     self.CurrentGrid.row]
         if self.CurrentGrid is None:
             for i in range(9):
                 for j in range(9):
@@ -129,25 +118,18 @@ class GameSudoku2(scene.Scene):
         else:
             for i in range(9):
                 for j in range(9):
-                    num = self.Number[i][j]
-                    grid = self.GridRect81[i][j]
-                    if num != 0:
-                        if num == self.CurrentGrid.num:
-                            grid.text_color = (0, 0, 255)
-                        else:
-                            grid.text_color = (0, 0, 0)
-                        grid.num = num
-                        grid.draw(self.screen, num)
+                    # 判断是否是初始格子矩阵上不为0的格子
+                    if self.NumberCpoy[i][j] != 0:
+                        self.GridRect81[i][j].num = self.NumberCpoy[i][j]
+                        self.GridRect81[i][j].text_color = (0, 0, 0)
                     else:
-                        grid.num = 0
-                        grid.draw(self.screen, num)
-
-                    if num == self.Number[self.CurrentGrid.col][self.CurrentGrid.row]:
-                        if self.NumberCpoy[i][j] == 0:
-                            pass
-
-
-
+                        if self.Number[i][j] == self.NumberCompare[i][j]:
+                            self.GridRect81[i][j].num = self.Number[i][j]
+                            self.GridRect81[i][j].text_color = (0, 255, 0)
+                        else:
+                            self.GridRect81[i][j].num = self.Number[i][j]
+                            self.GridRect81[i][j].text_color = (255, 0, 0)
+                    self.GridRect81[i][j].draw(self.screen, self.Number[i][j])
 
     # 更改选中格子所在的九宫格和行列的格子颜色
     def draw_selected_grid(self):
@@ -165,6 +147,7 @@ class GameSudoku2(scene.Scene):
                     self.GridRect81[i][j].color = self.SELECT_COLOR
                 else:
                     self.GridRect81[i][j].color = self.UNSELECT_COLOR
+
         # 优化绘制纵向格子的效果
         for grid in self.GridRect81[self.CurrentGrid.col]:
             grid.color = self.SELECT_COLOR
@@ -172,6 +155,15 @@ class GameSudoku2(scene.Scene):
         # 优化绘制横向格子的效果
         for i in range(9):
             self.GridRect81[i][self.CurrentGrid.row].color = self.SELECT_COLOR
+
+        if self.CurrentGrid.num != 0:
+            # 绘制所有与当前选中格子相同的格子
+            for i in range(9):
+                for j in range(9):
+                    if self.Number[i][j] == self.CurrentGrid.num:
+                        self.GridRect81[i][j].color = (135, 206, 235)
+        elif self.CurrentGrid.num == 0:
+            self.CurrentGrid.color = (135, 206, 235)
 
     def handle_event(self):
 

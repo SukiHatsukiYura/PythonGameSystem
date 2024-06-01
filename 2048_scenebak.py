@@ -2,11 +2,9 @@ import pygame
 import random
 
 
-
 # 定义游戏类
 class Game2048():
 
-    
     def __init__(self, grid_size=4, cell_size=100):
         self.GRID_SIZE = grid_size
         self.CELL_SIZE = cell_size

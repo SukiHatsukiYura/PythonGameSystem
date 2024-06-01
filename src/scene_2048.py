@@ -98,7 +98,7 @@ class Game2048(scene.Scene):
         self.add_new_tile()
         self.add_new_tile()
 
-    def draw(self):        
+    def draw(self):
         self.screen.fill(self.BACKGROUND_COLOR)
         self.draw_gird()
         self.draw_score()
@@ -274,12 +274,6 @@ class Game2048(scene.Scene):
         return True
 
     def handle_event(self):
-        #self.btn_click(self.btn_4x4, self.restart, "4x4")
-
-        # self.btn_click(self.btn_5x5, self.restart, "5x5")
-        # self.btn_click(self.btn_6x6, self.restart, "6x6")
-        # self.btn_click(self.btn_restart, self.restart, self.mode)
-        # self.btn_click(self.btn_back, sm.scenemanager.change_scene,"mode_scene")
         self.btn_4x4.btn_click(self.screen, self.restart, "4x4")
         self.btn_5x5.btn_click(self.screen, self.restart, "5x5")
         self.btn_6x6.btn_click(self.screen, self.restart, "6x6")
