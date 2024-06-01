@@ -68,7 +68,7 @@ class Game2048(scene.Scene):
         self.text_sorce = pygame.font.Font(pygame.font.match_font("SimHei"),
                                            24)
         self.grid_font = pygame.font.Font(pygame.font.match_font("SimHei"), 48)
-        #self.screen = pygame.display.set_mode(self.size)
+        # self.screen = pygame.display.set_mode(self.size)
         super().__init__()
         pygame.display.set_caption("2048")
         # 绘制按钮
@@ -102,7 +102,7 @@ class Game2048(scene.Scene):
         self.screen.fill(self.BACKGROUND_COLOR)
         self.draw_gird()
         self.draw_score()
-        #self.draw_lines()
+        # self.draw_lines()
 
     def draw_gird(self):
         # 绘制格子
