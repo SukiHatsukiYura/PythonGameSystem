@@ -109,8 +109,7 @@ class GameSudoku(scene.Scene):
         self.screen.blit(self.text_font.render("还需填入  个格子", True, (0, 0, 0)), (670, 10))
         text_num = self.text_font.render(str((lst_num == 0).sum()), True, (255, 97, 0))
         # 让数字居中显示
-        text_rect = text_num.get_rect(center=((680 + 80), 20))
-        self.screen.blit(self.text_font.render(str((lst_num == 0).sum()), True, (255, 97, 0)), text_rect)
+        self.screen.blit(self.text_font.render(str((lst_num == 0).sum()), True, (255, 97, 0)), text_num.get_rect(center=((680 + 80), 20)))
         # 绘制当前模式
         self.screen.blit(self.text_font.render("当前模式: ", True, (0, 0, 0)), (670, 36))
         if self.mode == 'easy':
@@ -119,15 +118,13 @@ class GameSudoku(scene.Scene):
             mode_text = self.text_font.render("中等", True, (205, 149, 12))
         else:
             mode_text = self.text_font.render("困难", True, (255, 0, 0))
-        self.screen.blit(mode_text, (670+100, 36))
+        self.screen.blit(mode_text, (670 + 100, 36))
 
         # 绘制各数字还有多少个
         for i in range(1, 10):
-            num_text = self.text_font.render("数字" + str(i) + ":   个", True, (0, 0, 0))
             number = self.text_font.render(str((lst_num == i).sum()), True, (255, 97, 0))
-            num_text_rect = number.get_rect(center=((670 + 75), 48 + 26 * i))
-            self.screen.blit(num_text, (670, 38 + 26 * i))
-            self.screen.blit(number, num_text_rect)
+            self.screen.blit(self.text_font.render("数字" + str(i) + ":   个", True, (0, 0, 0)), (670, 38 + 26 * i))
+            self.screen.blit(number, number.get_rect(center=((670 + 75), 48 + 26 * i)))
 
     def draw_line(self):
         # 绘制游戏网格的水平和垂直线条
@@ -161,8 +158,8 @@ class GameSudoku(scene.Scene):
                      i * self.GridSize70 + self.GridLineWidth * i),
                     self.GridLineWidth)
 
-    # 更改数字颜色
     def draw_number(self):
+        # 更改数字颜色
         for i in range(9):
             for j in range(9):
                 # 判断是否是初始格子矩阵上不为0的格子
@@ -179,8 +176,10 @@ class GameSudoku(scene.Scene):
                 # 绘制数字
                 self.GridRect81[i][j].draw(self.screen, self.Number[i][j])
 
-    # 更改选中格子所在的九宫格和行列的格子颜色
     def draw_selected_grid(self):
+        """
+        更改选中格子所在的九宫格和行列的格子颜色
+        """
         # 重置所有格子颜色为未选中颜色
         for i in range(9):
             for j in range(9):
@@ -188,7 +187,6 @@ class GameSudoku(scene.Scene):
         if self.CurrentGrid is None:  # 未选中任何格子
             return
         # 选中当前格子所在的九宫格和行列的格子颜色
-
         colstart = (self.CurrentGrid.row // 3) * 3
         rowstart = (self.CurrentGrid.col // 3) * 3
         for i in range(3):

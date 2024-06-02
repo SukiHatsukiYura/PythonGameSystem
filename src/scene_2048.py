@@ -83,24 +83,6 @@ class Game2048(scene.Scene):
         self.add_new_tile()
         self.add_new_tile()
 
-    def restart(self, mode="4x4"):
-        # 重新开始游戏
-        self.mode = mode
-        match mode:
-            case "4x4":
-                self.GRID_SIZE = 4
-                self.CELL_SIZE = 150
-            case "5x5":
-                self.GRID_SIZE = 5
-                self.CELL_SIZE = 118
-            case "6x6":
-                self.GRID_SIZE = 6
-                self.CELL_SIZE = 96
-        self.score = 0
-        self.grid = [[0] * self.GRID_SIZE for _ in range(self.GRID_SIZE)]
-        self.add_new_tile()
-        self.add_new_tile()
-
     def draw(self):
         pygame.display.set_caption("2048")
         self.screen.fill(self.BACKGROUND_COLOR)
@@ -216,7 +198,6 @@ class Game2048(scene.Scene):
 
     def move_tiles_right(self):
         # 向右移动所有数字块
-
         for row in range(self.GRID_SIZE):
             merged = [False] * self.GRID_SIZE
             for col in range(self.GRID_SIZE - 2, -1, -1):
@@ -237,7 +218,6 @@ class Game2048(scene.Scene):
 
     def move_tiles_down(self):
         # 向下移动所有数字块
-
         for col in range(self.GRID_SIZE):
             merged = [False] * self.GRID_SIZE
             for row in range(self.GRID_SIZE - 2, -1, -1):
@@ -256,18 +236,7 @@ class Game2048(scene.Scene):
                         merged[k + 1] = True
                         self.update_score(self.grid[k + 1][col])  # 更新积分
 
-        # 检查游戏是否结束（无法再移动数字块）
-        for row in range(self.GRID_SIZE):
-            for col in range(self.GRID_SIZE):
-                if self.grid[row][col] == 0:
-                    return False
-                if col < self.GRID_SIZE - 1 and self.grid[row][
-                        col] == self.grid[row][col + 1]:
-                    return False
-                if row < self.GRID_SIZE - 1 and self.grid[row][
-                        col] == self.grid[row + 1][col]:
-                    return False
-        return True
+
 
     def handle_event(self):
         self.btn_4x4.btn_click(self.screen, self.restart, mode="4x4")
@@ -317,6 +286,24 @@ class Game2048(scene.Scene):
                         col] == self.grid[row + 1][col]:
                     return False
         return True
+
+    def restart(self, mode="4x4"):
+        # 重新开始游戏
+        self.mode = mode
+        match mode:
+                case "4x4":
+                    self.GRID_SIZE = 4
+                    self.CELL_SIZE = 150
+                case "5x5":
+                    self.GRID_SIZE = 5
+                    self.CELL_SIZE = 118
+                case "6x6":
+                    self.GRID_SIZE = 6
+                    self.CELL_SIZE = 96
+        self.score = 0
+        self.grid = [[0] * self.GRID_SIZE for _ in range(self.GRID_SIZE)]
+        self.add_new_tile()
+        self.add_new_tile()
 
     def update_score(self, points):
         # 更新积分
