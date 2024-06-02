@@ -236,8 +236,6 @@ class Game2048(scene.Scene):
                         merged[k + 1] = True
                         self.update_score(self.grid[k + 1][col])  # 更新积分
 
-
-
     def handle_event(self):
         self.btn_4x4.btn_click(self.screen, self.restart, mode="4x4")
         self.btn_5x5.btn_click(self.screen, self.restart, mode="5x5")
@@ -263,15 +261,10 @@ class Game2048(scene.Scene):
                         self.move_tiles_down()
                         self.add_new_tile()  # 在移动后生成新数字块
                 else:
-                    if self.popup("游戏结束!", "是否重新开始?") == True:  # 重新开始游戏
+                    if messagebox.askyesno("游戏结束!", "是否重新开始?", icon="question") == True:  # 重新开始游戏
                         self.restart()  # 重新开始游戏
                     else:
                         pass
-
-    def popup(self, title, message):
-        # 弹出提示框
-        return messagebox.askyesno(title, message,
-                                   icon='warning')  # 返回True或False
 
     def is_game_over(self):
         # 检查游戏是否结束（无法再移动数字块）
@@ -291,15 +284,15 @@ class Game2048(scene.Scene):
         # 重新开始游戏
         self.mode = mode
         match mode:
-                case "4x4":
-                    self.GRID_SIZE = 4
-                    self.CELL_SIZE = 150
-                case "5x5":
-                    self.GRID_SIZE = 5
-                    self.CELL_SIZE = 118
-                case "6x6":
-                    self.GRID_SIZE = 6
-                    self.CELL_SIZE = 96
+            case "4x4":
+                self.GRID_SIZE = 4
+                self.CELL_SIZE = 150
+            case "5x5":
+                self.GRID_SIZE = 5
+                self.CELL_SIZE = 118
+            case "6x6":
+                self.GRID_SIZE = 6
+                self.CELL_SIZE = 96
         self.score = 0
         self.grid = [[0] * self.GRID_SIZE for _ in range(self.GRID_SIZE)]
         self.add_new_tile()

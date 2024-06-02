@@ -247,7 +247,7 @@ class GameSudoku(scene.Scene):
                 # 如果游戏胜利，弹出提示框，点确定游戏重新开始，点取消显示完整的棋盘，且不能再进行游戏,再次点击棋盘才会弹出提示框
                 if self.is_win() and x < 9 and y < 9:
                     self.draw_number()
-                    if self.popup("恭喜", "你已经完成本次数独!" + "\n是否重新开始?"):
+                    if messagebox.askyesno("恭喜", "你已经完成本次数独!" + "\n是否重新开始?", icon="question") == True:  # 重新开始游戏
                         self.restart()
                     else:
                         pass
@@ -264,10 +264,6 @@ class GameSudoku(scene.Scene):
                     return False    # 存在错误数字，游戏未结束
         return True
 
-    def popup(self, title, message):
-        # 弹出提示框
-        return messagebox.askyesno(title, message,
-                                   icon='question')  # 返回True或False
     # 重新开始游戏
 
     def restart(self, mode='easy'):
