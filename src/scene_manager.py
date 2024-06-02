@@ -18,10 +18,10 @@ class SceneManager:
         "scene_sudoku": scene_sudoku.GameSudoku(),  # 数独游戏场景
     }
 
-    current_scene = scene_dict["scene_sudoku"]
+    #current_scene = scene_dict["scene_sudoku"]
 
-    # current_scene = scene_dict["start_scene"]
-    # pygame.display.set_mode((800, 633))
+    current_scene = scene_dict["start_scene"]
+    pygame.display.set_mode((800, 633))
     def change_scene(self, scene_name):
         """
         切换场景

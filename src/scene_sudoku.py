@@ -48,11 +48,11 @@ class GameSudoku(scene.Scene):
     size = (GridSideLength + RegionWidth, GridSideLength)  # 窗口大小
     icon_path = "img/sudoku.jpg"
     # 难度切换按钮--简单
-    btn_easy = btn.Button(670, 300, 160, 60, (255, 255, 255), "简单", (0, 0, 0), 32)
+    btn_easy = btn.Button(670, 300, 160, 60, (255, 255, 255), "简单", (50, 205, 50), 32)
     # 难度切换按钮--中等
-    btn_medium = btn.Button(670, 370, 160, 60, (255, 255, 255), "中等", (0, 0, 0), 32)
+    btn_medium = btn.Button(670, 370, 160, 60, (255, 255, 255), "中等", (205, 149, 12), 32)
     # 难度切换按钮--困难
-    btn_hard = btn.Button(670, 440, 160, 60, (255, 255, 255), "困难", (0, 0, 0), 32)
+    btn_hard = btn.Button(670, 440, 160, 60, (255, 255, 255), "困难", (255, 0, 0), 32)
     # 新局按钮
     btn_reset = btn.Button(670, 510, 160, 60, (255, 255, 255), "新局", (0, 0, 0), 32)
     # 返回按钮
@@ -65,7 +65,7 @@ class GameSudoku(scene.Scene):
         self.GridLineColor_Black = (0, 0, 0)  # 网格线条颜色-黑色
         self.GridLineColor_Gray = (200, 200, 200)  # 网格线条颜色-灰色
         self.SELECT_COLOR = (255, 225, 255)  # 选中格子颜色
-        self.UNSELECT_COLOR = (255, 255, 255)  # 未选中格子颜色
+        self.UNSELECT_COLOR = (255, 255, 235)  # 未选中格子颜色
         # 定义游戏数字相关参数
         self.mode = 'easy'  # 数独难度模式,默认简单模式
         self.Number = [[0 for _ in range(9)] for _ in range(9)]  # 9x9的数字矩阵
@@ -79,10 +79,9 @@ class GameSudoku(scene.Scene):
         # 定义文本信息相关参数
         self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 20)  # 设置文本字体
         # 定义键盘事件映射字典
-        self.key_mapping = {pygame.K_BACKSPACE: 0,
-                            pygame.K_1: 1, pygame.K_2: 2, pygame.K_3: 3, pygame.K_4: 4,
-                            pygame.K_5: 5, pygame.K_6: 6, pygame.K_7: 7, pygame.K_8: 8,
-                            pygame.K_9: 9
+        self.key_mapping = {pygame.K_BACKSPACE: 0, pygame.K_1: 1,
+                            pygame.K_2: 2, pygame.K_3: 3, pygame.K_4: 4, pygame.K_5: 5,
+                            pygame.K_6: 6, pygame.K_7: 7, pygame.K_8: 8, pygame.K_9: 9
                             }
         # 定义9x9的格子矩阵,存放81个矩形(格子)对象,每个网格的边长为70像素,网格线条宽度为2像素,网格颜色为白色
         self.GridRect81 = [[GridRect(x * self.GridSize70 + (2 * x + 2), y * self.GridSize70 + 2 * (y + 1),
@@ -98,7 +97,7 @@ class GameSudoku(scene.Scene):
 
     def draw(self):
         pygame.display.set_caption("数独")  # 设置标题
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((255, 255, 235))
         self.draw_selected_grid()
         self.draw_number()
         self.draw_line()
@@ -108,26 +107,26 @@ class GameSudoku(scene.Scene):
         # 使用numpy将矩阵转换为数组，并计算还需填入的格子数量
         lst_num = np.array(self.Number)
         # 如果场上还有空白格子，则在区域显示要填入的单元格还有多少
-        text = self.text_font.render("还需填入    个格子", True, (0, 0, 0))
-        self.screen.blit(text, (670, 10))
+        self.screen.blit(self.text_font.render("还需填入  个格子", True, (0, 0, 0)), (670, 10))
         text_num = self.text_font.render(str((lst_num == 0).sum()), True, (255, 97, 0))
         # 让数字居中显示
-        text_rect = text_num.get_rect(center=((680 + 90), 20))
-        self.screen.blit(text_num, text_rect)
+        text_rect = text_num.get_rect(center=((680 + 80), 20))
+        self.screen.blit(self.text_font.render(str((lst_num == 0).sum()), True, (255, 97, 0)), text_rect)
         # 绘制当前模式
+        self.screen.blit(self.text_font.render("当前模式: ", True, (0, 0, 0)), (670, 36))
         if self.mode == 'easy':
-            mode_text = self.text_font.render("当前模式：简单", True, (0, 0, 0))
+            mode_text = self.text_font.render("简单", True, (50, 205, 50))
         elif self.mode == 'medium':
-            mode_text = self.text_font.render("当前模式：中等", True, (0, 0, 0))
+            mode_text = self.text_font.render("中等", True, (205, 149, 12))
         else:
-            mode_text = self.text_font.render("当前模式：困难", True, (0, 0, 0))
-        self.screen.blit(mode_text, (670, 36))
+            mode_text = self.text_font.render("困难", True, (255, 0, 0))
+        self.screen.blit(mode_text, (670+100, 36))
 
         # 绘制各数字还有多少个
         for i in range(1, 10):
-            num_text = self.text_font.render("已填入" + str(i) + ":   个", True, (0, 0, 0))
+            num_text = self.text_font.render("数字" + str(i) + ":   个", True, (0, 0, 0))
             number = self.text_font.render(str((lst_num == i).sum()), True, (255, 97, 0))
-            num_text_rect = number.get_rect(center=((670 + 93), 48 + 26 * i))
+            num_text_rect = number.get_rect(center=((670 + 75), 48 + 26 * i))
             self.screen.blit(num_text, (670, 38 + 26 * i))
             self.screen.blit(number, num_text_rect)
 
@@ -251,7 +250,7 @@ class GameSudoku(scene.Scene):
                 # 如果游戏胜利，弹出提示框，点确定游戏重新开始，点取消显示完整的棋盘，且不能再进行游戏,再次点击棋盘才会弹出提示框
                 if self.is_win() and x < 9 and y < 9:
                     self.draw_number()
-                    if self.popup("恭喜你！", "你已经完成了这次的数独！"):
+                    if self.popup("恭喜", "你已经完成本次数独!" + "\n是否重新开始?"):
                         self.restart()
                     else:
                         pass
@@ -271,7 +270,7 @@ class GameSudoku(scene.Scene):
     def popup(self, title, message):
         # 弹出提示框
         return messagebox.askyesno(title, message,
-                                   icon='warning')  # 返回True或False
+                                   icon='question')  # 返回True或False
     # 重新开始游戏
 
     def restart(self, mode='easy'):
@@ -332,11 +331,11 @@ class GameSudoku(scene.Scene):
         # 根据难度级别确定需要移除的单元格数量
         num_to_remove = 0
         if difficulty == 'easy':
-            num_to_remove = 25
+            num_to_remove = 20
         elif difficulty == 'medium':
-            num_to_remove = 35
+            num_to_remove = 30
         elif difficulty == 'hard':
-            num_to_remove = 55
+            num_to_remove = 50
 
         # 生成数独单元格的坐标
         cells = [(i, j) for i in range(9) for j in range(9)]
@@ -346,7 +345,7 @@ class GameSudoku(scene.Scene):
         for i, j in cells:
             if num_to_remove == 0:
                 break
-            temp = self.Number[i][j]
+            # temp = self.Number[i][j]
             self.Number[i][j] = 0
             # # 检查数独谜题是否仍然有唯一解，如果没有，将该单元格的值还原
             # if not self.has_unique_solution():
