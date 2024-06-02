@@ -106,7 +106,6 @@ class Game2048(scene.Scene):
         self.screen.fill(self.BACKGROUND_COLOR)
         self.draw_gird()
         self.draw_score()
-        # self.draw_lines()
 
     def draw_gird(self):
         # 绘制格子
@@ -122,13 +121,6 @@ class Game2048(scene.Scene):
                 pygame.draw.rect(self.screen, cell_color, cell_rect)
                 if cell_value != 0:
                     self.draw_text(self.screen, str(cell_value), cell_rect)
-
-    def draw_lines(self):
-        # 绘制外框线
-        pygame.draw.line(self.screen, (255, 225, 255), (648, 0), (648, 650), 2)
-        pygame.draw.line(self.screen, (255, 225, 255), (0, 0), (648, 0), 2)
-        pygame.draw.line(self.screen, (255, 225, 255), (0, 0), (0, 650), 2)
-        pygame.draw.line(self.screen, (255, 225, 255), (0, 647), (647, 647), 2)
 
     def draw_score(self):
         # 绘制积分

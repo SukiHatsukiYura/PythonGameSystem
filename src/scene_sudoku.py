@@ -5,6 +5,8 @@ import random
 import copy
 from tkinter import messagebox
 import button as btn
+import numpy as np
+
 
 class GridRect():
     """
@@ -46,15 +48,15 @@ class GameSudoku(scene.Scene):
     size = (GridSideLength + RegionWidth, GridSideLength)  # 窗口大小
     icon_path = "img/sudoku.jpg"
     # 难度切换按钮--简单
-    btn_easy = btn.Button(670, 250, 160, 60, (255, 255, 255), "简单", (0, 0, 0), 32)
+    btn_easy = btn.Button(670, 300, 160, 60, (255, 255, 255), "简单", (0, 0, 0), 32)
     # 难度切换按钮--中等
-    btn_medium = btn.Button(670, 330, 160, 60, (255, 255, 255), "中等", (0, 0, 0), 32)
+    btn_medium = btn.Button(670, 370, 160, 60, (255, 255, 255), "中等", (0, 0, 0), 32)
     # 难度切换按钮--困难
-    btn_hard = btn.Button(670, 410, 160, 60, (255, 255, 255), "困难", (0, 0, 0), 32)
+    btn_hard = btn.Button(670, 440, 160, 60, (255, 255, 255), "困难", (0, 0, 0), 32)
     # 新局按钮
-    btn_reset = btn.Button(670, 490, 160, 60, (255, 255, 255), "新局", (0, 0, 0), 32)
+    btn_reset = btn.Button(670, 510, 160, 60, (255, 255, 255), "新局", (0, 0, 0), 32)
     # 返回按钮
-    btn_exit = btn.Button(670, 570, 160, 60, (255, 255, 255), "返回", (0, 0, 0), 32)
+    btn_exit = btn.Button(670, 580, 160, 60, (255, 255, 255), "返回", (0, 0, 0), 32)
 
     def __init__(self):
         # 定义游戏网格相关参数
@@ -74,6 +76,8 @@ class GameSudoku(scene.Scene):
         self.NumerColor = (0, 0, 0)  # 常规数字颜色
         self.NumerTrueColor = (0, 255, 0)  # 正确数字颜色
         self.NumerFalseColor = (255, 0, 0)  # 错误数字颜色
+        # 定义文本信息相关参数
+        self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 20)  # 设置文本字体
         # 定义键盘事件映射字典
         self.key_mapping = {pygame.K_BACKSPACE: 0,
                             pygame.K_1: 1, pygame.K_2: 2, pygame.K_3: 3, pygame.K_4: 4,
@@ -83,7 +87,7 @@ class GameSudoku(scene.Scene):
         # 定义9x9的格子矩阵,存放81个矩形(格子)对象,每个网格的边长为70像素,网格线条宽度为2像素,网格颜色为白色
         self.GridRect81 = [[GridRect(x * self.GridSize70 + (2 * x + 2), y * self.GridSize70 + 2 * (y + 1),
                                      self.GridSize70, self.GridSize70) for y in range(9)] for x in range(9)]
-        
+
         super().__init__()  # 窗口初始化
         self.screen.fill((255, 255, 255))  # 填充背景颜色
         self.title = "数独"  # 设置标题
@@ -91,12 +95,6 @@ class GameSudoku(scene.Scene):
         pygame.display.set_icon(self.icon)  # 设置窗口图标
 
         self.CurrentGrid = self.GridRect81[4][4]  # 保存当前选中的格子坐标
-        # 按钮初始化
-        self.btn_easy.draw(self.screen)
-        self.btn_medium.draw(self.screen)
-        self.btn_hard.draw(self.screen)
-        self.btn_reset.draw(self.screen)
-        self.btn_exit.draw(self.screen)
 
     def draw(self):
         pygame.display.set_caption("数独")  # 设置标题
@@ -104,6 +102,34 @@ class GameSudoku(scene.Scene):
         self.draw_selected_grid()
         self.draw_number()
         self.draw_line()
+        self.draw_text()
+
+    def draw_text(self):
+        # 使用numpy将矩阵转换为数组，并计算还需填入的格子数量
+        lst_num = np.array(self.Number)
+        # 如果场上还有空白格子，则在区域显示要填入的单元格还有多少
+        text = self.text_font.render("还需填入    个格子", True, (0, 0, 0))
+        self.screen.blit(text, (670, 10))
+        text_num = self.text_font.render(str((lst_num == 0).sum()), True, (255, 97, 0))
+        # 让数字居中显示
+        text_rect = text_num.get_rect(center=((680 + 90), 20))
+        self.screen.blit(text_num, text_rect)
+        # 绘制当前模式
+        if self.mode == 'easy':
+            mode_text = self.text_font.render("当前模式：简单", True, (0, 0, 0))
+        elif self.mode == 'medium':
+            mode_text = self.text_font.render("当前模式：中等", True, (0, 0, 0))
+        else:
+            mode_text = self.text_font.render("当前模式：困难", True, (0, 0, 0))
+        self.screen.blit(mode_text, (670, 36))
+
+        # 绘制各数字还有多少个
+        for i in range(1, 10):
+            num_text = self.text_font.render("已填入" + str(i) + ":   个", True, (0, 0, 0))
+            number = self.text_font.render(str((lst_num == i).sum()), True, (255, 97, 0))
+            num_text_rect = number.get_rect(center=((670 + 93), 48 + 26 * i))
+            self.screen.blit(num_text, (670, 38 + 26 * i))
+            self.screen.blit(number, num_text_rect)
 
     def draw_line(self):
         # 绘制游戏网格的水平和垂直线条
@@ -113,13 +139,13 @@ class GameSudoku(scene.Scene):
                 pygame.draw.line(
                     self.screen, self.GridLineColor_Gray,
                     (i * self.GridSize70 + self.GridLineWidth * i, 0),
-                    (i * self.GridSize70 + self.GridLineWidth * i, 650),
+                    (i * self.GridSize70 + self.GridLineWidth * i, self.GridSideLength),
                     self.GridLineWidth)
                 # 绘制灰色水平线条
                 pygame.draw.line(
                     self.screen, self.GridLineColor_Gray,
                     (0, i * self.GridSize70 + self.GridLineWidth * i),
-                    (650, i * self.GridSize70 + self.GridLineWidth * i),
+                    (self.GridSideLength, i * self.GridSize70 + self.GridLineWidth * i),
                     self.GridLineWidth)
         for i in range(10):
             if i % 3 == 0:
@@ -128,16 +154,15 @@ class GameSudoku(scene.Scene):
                     self.screen, self.GridLineColor_Black,
                     (i * self.GridSize70 + self.GridLineWidth * i, 0),
                     (i * self.GridSize70 + self.GridLineWidth * i,
-                     650 - self.GridLineWidth), self.GridLineWidth)
+                     self.GridSideLength - self.GridLineWidth), self.GridLineWidth)
                 # 绘制黑色水平线条
                 pygame.draw.line(
                     self.screen, self.GridLineColor_Black,
                     (0, i * self.GridSize70 + self.GridLineWidth * i),
-                    (650 - self.GridLineWidth,
+                    (self.GridSideLength - self.GridLineWidth,
                      i * self.GridSize70 + self.GridLineWidth * i),
                     self.GridLineWidth)
-    def draw_text(self):
-        pass
+
     # 更改数字颜色
     def draw_number(self):
         for i in range(9):
@@ -253,25 +278,8 @@ class GameSudoku(scene.Scene):
         self.mode = mode
         self.generate_sudoku()  # 生成数独
         self.NumberCompare = copy.deepcopy(self.Number)  # 保存当前数独的完整版本
-        match mode:
-            case 'easy':
-                self.mode = mode
-                self.generate_sudoku()  # 生成数独
-                self.NumberCompare = copy.deepcopy(self.Number)  # 保存当前数独的完整版本
-                self.remove_cells(self.mode)  # 移除一些单元格，使数独难度变为简单
-                self.NumberCpoy = copy.deepcopy(self.Number)  # 保存当前数独的难度版本(即移除的单元格)
-            case 'medium':
-                self.mode = mode
-                self.generate_sudoku()  # 生成数独
-                self.NumberCompare = copy.deepcopy(self.Number)  # 保存当前数独的完整版本
-                self.remove_cells(self.mode)  # 移除一些单元格，使数独难度变为中等
-                self.NumberCpoy = copy.deepcopy(self.Number)  # 保存当前数独的难度版本(即移除的单元格)
-            case 'hard':
-                self.mode = mode
-                self.generate_sudoku()  # 生成数独
-                self.NumberCompare = copy.deepcopy(self.Number)  # 保存当前数独的完整版本
-                self.remove_cells(self.mode)  # 移除一些单元格，使数独难度变为困难
-                self.NumberCpoy = copy.deepcopy(self.Number)  # 保存当前数独的难度版本(即移除的单元格)
+        self.remove_cells(self.mode)  # 移除一些单元格，使数独难度变为简单
+        self.NumberCpoy = copy.deepcopy(self.Number)  # 保存当前数独的难度版本(即移除的单元格)
 
     # 数独的生成算法：
     # 1. 随机填充数字，直到没有唯一解
@@ -324,11 +332,11 @@ class GameSudoku(scene.Scene):
         # 根据难度级别确定需要移除的单元格数量
         num_to_remove = 0
         if difficulty == 'easy':
-            num_to_remove = 20
+            num_to_remove = 25
         elif difficulty == 'medium':
-            num_to_remove = 30
+            num_to_remove = 35
         elif difficulty == 'hard':
-            num_to_remove = 50
+            num_to_remove = 55
 
         # 生成数独单元格的坐标
         cells = [(i, j) for i in range(9) for j in range(9)]
