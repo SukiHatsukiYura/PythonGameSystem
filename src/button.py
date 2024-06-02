@@ -61,7 +61,7 @@ class Button:
             (self.color[0], self.color[1], self.color[2], transparent_color),
             (0, 0, self.width, self.height),
             border_radius=15)
-        #在按钮四周加上边框
+        # 在按钮四周加上边框
         pygame.draw.rect(rect_surface, (0, 0, 0),
                          (0, 0, self.width, self.height),
                          width=5,
@@ -70,25 +70,29 @@ class Button:
         screen.blit(rect_surface, (self.x, self.y))
 
         text = self.font.render(self.text, True, (self.text_color))
-        #文本居中
+        # 文本居中
         text_rect = text.get_rect(center=(self.x + self.width / 2,
                                           self.y + self.height / 2))
         # 绘制文本
         screen.blit(text, text_rect)
 
-    def btn_click(self, screen, change, mode):
+    def btn_click(self, screen, *args, mode=None, unclick_color=(237, 224, 200), click_color=(127, 127, 127)):
         """
         按钮点击事件
         :param screen: 当前屏幕对象
-        :param change: 切换游戏模式函数
-        :param mode: 要切换的游戏模式(切换函数参数)
+        :param args: 可变参数，包含所有需要切换的游戏模式的函数
+        :param mode: 要切换的游戏模式(切换函数参数)，需用关键字参数传入
         """
         if self.is_clicked(pygame.mouse.get_pos()) == True:
-            self.color = (127, 127, 127)  # 设置按钮颜色为灰色
+            self.color = click_color  # 设置按钮颜色为灰色
             if pygame.event.poll().type == pygame.MOUSEBUTTONUP:  # 检测到鼠标按下
-                change(mode)  # 切换到对应模式
+                for fun in args:  # 遍历所有切换函数
+                    if mode is not None:  # 如果有传入函数参数
+                        fun(mode)  # 调用函数并传入参数
+                    else:
+                        fun()  # 调用函数
         else:
-            self.color = (237, 224, 200)  # 恢复按钮颜色为米黄色
+            self.color = unclick_color  # 恢复按钮颜色为米黄色
         self.draw(screen, 120)  # 重新绘制按钮
 
     def is_clicked(self, mouse_pos):

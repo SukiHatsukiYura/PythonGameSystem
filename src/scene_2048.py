@@ -30,15 +30,15 @@ class Game2048(scene.Scene):
     high_scroe_5x5: int  # 5x5最高分
     high_scroe_6x6: int  # 6x6最高分
     # 定义按钮
-    btn_4x4 = button.Button(665, 250, 170, 60, (237, 224, 200), "4x4",
+    btn_4x4 = button.Button(660, 250, 170, 70, (237, 224, 200), "4x4",
                             (0, 0, 0), 32)
-    btn_5x5 = button.Button(665, 330, 170, 60, (237, 224, 200), "5x5",
+    btn_5x5 = button.Button(660, 330, 170, 70, (237, 224, 200), "5x5",
                             (0, 0, 0), 32)
-    btn_6x6 = button.Button(665, 410, 170, 60, (237, 224, 200), "6x6",
+    btn_6x6 = button.Button(660, 410, 170, 70, (237, 224, 200), "6x6",
                             (0, 0, 0), 32)
-    btn_restart = button.Button(665, 490, 170, 60, (237, 224, 200), "新一局",
+    btn_restart = button.Button(660, 490, 170, 70, (237, 224, 200), "新局",
                                 (0, 0, 0), 32)
-    btn_back = button.Button(665, 570, 170, 60, (237, 224, 200), "返 回",
+    btn_back = button.Button(660, 570, 170, 70, (237, 224, 200), "返回",
                              (0, 0, 0), 32)
     icon_path = "img/2048.jpg"
 
@@ -73,7 +73,7 @@ class Game2048(scene.Scene):
         super().__init__()
         self.title = "2048"
         self.icon = pygame.image.load(self.icon_path)
-        pygame.display.set_icon(self.icon)
+
         # 绘制按钮
         self.btn_back.draw(self.screen)
         self.btn_restart.draw(self.screen)
@@ -270,15 +270,15 @@ class Game2048(scene.Scene):
         return True
 
     def handle_event(self):
-        self.btn_4x4.btn_click(self.screen, self.restart, "4x4")
-        self.btn_5x5.btn_click(self.screen, self.restart, "5x5")
-        self.btn_6x6.btn_click(self.screen, self.restart, "6x6")
-        self.btn_restart.btn_click(self.screen, self.restart, self.mode)
+        self.btn_4x4.btn_click(self.screen, self.restart, mode="4x4")
+        self.btn_5x5.btn_click(self.screen, self.restart, mode="5x5")
+        self.btn_6x6.btn_click(self.screen, self.restart, mode="6x6")
+        self.btn_restart.btn_click(self.screen, self.restart, mode=self.mode)
         self.btn_back.btn_click(self.screen, sm.scenemanager.change_scene,
-                                "mode_scene")
+                                mode="scene_mode")
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sm.scenemanager.change_scene("mode_scene")  # 切换到游戏场景
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                sm.scenemanager.change_scene("scene_mode")  # 切换到游戏场景
             elif event.type == pygame.KEYDOWN:
                 if not self.is_game_over():
                     if event.key == pygame.K_a or event.key == pygame.K_LEFT:

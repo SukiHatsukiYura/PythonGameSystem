@@ -1,9 +1,8 @@
 import pygame
-import start_scene
-import mode_scene
+import scene_start
+import scene_mode
 import scene_2048
 import scene_sudoku
-
 
 class SceneManager:
     """
@@ -12,31 +11,33 @@ class SceneManager:
     current_scene: object = None  # 当前场景对象
     # 场景字典
     scene_dict = {
-        "start_scene": start_scene.StartScene(),  # 开始场景
-        "mode_scene": mode_scene.ModeScene(),  # 模式选择场景
+        "scene_start": scene_start.StartScene(),  # 开始场景
+        "scene_mode": scene_mode.ModeScene(),  # 模式选择场景
         "scene_2048": scene_2048.Game2048(),  # 2048游戏场景
         "scene_sudoku": scene_sudoku.GameSudoku(),  # 数独游戏场景
     }
 
-    #current_scene = scene_dict["scene_sudoku"]
+    def __init__(self):
+        self.current_scene = self.scene_dict["scene_start"]
+        pygame.display.set_mode((800, 633))
+        pygame.display.set_icon(self.current_scene.icon)
+        pygame.display.set_caption(self.current_scene.title)  # 设置标题
 
-    current_scene = scene_dict["start_scene"]
-    pygame.display.set_mode((800, 633))
     def change_scene(self, scene_name):
         """
         切换场景
         """
         self.current_scene = self.scene_dict[scene_name]
-        if scene_name == "mode_scene":
-            pygame.display.set_mode(self.current_scene.size)
-        if scene_name == "scene_2048":
-            pygame.display.set_mode(self.current_scene.size)
-            pygame.display.set_icon(self.current_scene.icon)
-        if scene_name == "scene_sudoku":
+        if scene_name == "scene_mode" or \
+                scene_name == "scene_2048" or \
+                scene_name == "scene_sudoku":
             pygame.display.set_mode(self.current_scene.size)
             pygame.display.set_icon(self.current_scene.icon)
+            pygame.display.set_caption(self.current_scene.title)  # 设置标题
+        else:
+            pygame.display.set_caption(self.current_scene.title)  # 设置标题
 
-        print("切换到场景:", scene_name)
+        print(f"\r切换到场景:{scene_name}", end="")
 
     def handle_event(self):
         """

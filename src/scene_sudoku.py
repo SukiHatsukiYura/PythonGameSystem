@@ -11,6 +11,9 @@ import numpy as np
 class GridRect():
     """
     网格矩形类
+    初始化：
+    x,y,w,h: 矩形左上角坐标和矩形宽高
+    color: 矩形颜色，默认为白色
     """
 
     def __init__(self, x, y, w, h, color=(255, 255, 255)):
@@ -19,10 +22,10 @@ class GridRect():
         self.w = w  # 矩形宽度
         self.h = h  # 矩形高度
         # 所在行列
-        self.__x_index = (x + 2) // 70
-        self.__y_index = (y + 2) // 70
-        self.col = (x - (self.__x_index * 2)) // 70  # 所在行
-        self.row = (y - (self.__y_index * 2)) // 70  # 所在列
+        self.__x_index = (x + 2) // w
+        self.__y_index = (y + 2) // h
+        self.col = (x - (self.__x_index * 2)) // w  # 所在行
+        self.row = (y - (self.__y_index * 2)) // h  # 所在列
         self.color = color  # 矩形颜色
         self.num = 0  # 数字
         self.num_font = pygame.font.Font(pygame.font.match_font("SimHei"),
@@ -86,17 +89,13 @@ class GameSudoku(scene.Scene):
         # 定义9x9的格子矩阵,存放81个矩形(格子)对象,每个网格的边长为70像素,网格线条宽度为2像素,网格颜色为白色
         self.GridRect81 = [[GridRect(x * self.GridSize70 + (2 * x + 2), y * self.GridSize70 + 2 * (y + 1),
                                      self.GridSize70, self.GridSize70) for y in range(9)] for x in range(9)]
-
+        self.CurrentGrid = self.GridRect81[4][4]  # 保存当前选中的格子坐标
         super().__init__()  # 窗口初始化
         self.screen.fill((255, 255, 255))  # 填充背景颜色
         self.title = "数独"  # 设置标题
         self.icon = pygame.image.load(self.icon_path)  # 设置图标
-        pygame.display.set_icon(self.icon)  # 设置窗口图标
-
-        self.CurrentGrid = self.GridRect81[4][4]  # 保存当前选中的格子坐标
 
     def draw(self):
-        pygame.display.set_caption("数独")  # 设置标题
         self.screen.fill((255, 255, 235))
         self.draw_selected_grid()
         self.draw_number()
@@ -216,18 +215,18 @@ class GameSudoku(scene.Scene):
         处理事件
         """
         # 按钮事件
-        self.btn_easy.btn_click(self.screen, self.restart, "easy")
-        self.btn_medium.btn_click(self.screen, self.restart, "medium")
-        self.btn_hard.btn_click(self.screen, self.restart, "hard")
-        self.btn_reset.btn_click(self.screen, self.restart, self.mode)
-        self.btn_exit.btn_click(self.screen, sm.scenemanager.change_scene, "mode_scene")
+        self.btn_easy.btn_click(self.screen, self.restart, mode="easy")
+        self.btn_medium.btn_click(self.screen, self.restart, mode="medium")
+        self.btn_hard.btn_click(self.screen, self.restart, mode="hard")
+        self.btn_reset.btn_click(self.screen, self.restart, mode=self.mode)
+        self.btn_exit.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_mode")
         if self.CurrentGrid is None:
             x, y = 0, 0
         else:
             x, y = (self.CurrentGrid.col, self.CurrentGrid.row)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sm.scenemanager.change_scene("mode_scene")
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                sm.scenemanager.change_scene("scene_mode")
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 x, y = pos  # 获取鼠标位置
