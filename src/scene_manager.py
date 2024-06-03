@@ -3,6 +3,8 @@ import scene_start
 import scene_mode
 import scene_2048
 import scene_sudoku
+import scene_tetris
+
 
 class SceneManager:
     """
@@ -15,6 +17,7 @@ class SceneManager:
         "scene_mode": scene_mode.ModeScene(),  # 模式选择场景
         "scene_2048": scene_2048.Game2048(),  # 2048游戏场景
         "scene_sudoku": scene_sudoku.GameSudoku(),  # 数独游戏场景
+        "scene_tetris": scene_tetris.GameTetris()  # 俄罗斯方块游戏场景
     }
 
     def __init__(self):
@@ -34,22 +37,25 @@ class SceneManager:
             pygame.display.set_mode(self.current_scene.size)
             pygame.display.set_icon(self.current_scene.icon)
             pygame.display.set_caption(self.current_scene.title)  # 设置标题
+        elif scene_name == "scene_tetris":
+            pygame.display.set_mode((400,750))
+            pygame.display.set_caption(self.current_scene.title)  # 设置标题
         else:
             pygame.display.set_caption(self.current_scene.title)  # 设置标题
 
         print(f"\r切换到场景:{scene_name}", end="")
 
-    def handle_event(self):
+    def Handle_Event(self):
         """
         处理事件
         """
-        self.current_scene.handle_event()
+        self.current_scene.Handle_Event()
 
-    def draw_scene(self):
+    def Draw_Scene(self):
         """
         绘制当前场景
         """
-        self.current_scene.draw()
+        self.current_scene.Draw()
 
 
 scenemanager = SceneManager()

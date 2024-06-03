@@ -16,13 +16,13 @@ class Scene:
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
 
-    def draw(self):
+    def Draw(self):
         """
         绘制场景内容
         """
         pass
 
-    def handle_event(self):
+    def Handle_Event(self):
         """
         处理事件
         """

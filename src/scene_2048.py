@@ -83,7 +83,7 @@ class Game2048(scene.Scene):
         self.add_new_tile()
         self.add_new_tile()
 
-    def draw(self):
+    def Draw(self):
         pygame.display.set_caption("2048")
         self.screen.fill(self.BACKGROUND_COLOR)
         self.draw_gird()
@@ -236,7 +236,7 @@ class Game2048(scene.Scene):
                         merged[k + 1] = True
                         self.update_score(self.grid[k + 1][col])  # 更新积分
 
-    def handle_event(self):
+    def Handle_Event(self):
         self.btn_4x4.btn_click(self.screen, self.restart, mode="4x4")
         self.btn_5x5.btn_click(self.screen, self.restart, mode="5x5")
         self.btn_6x6.btn_click(self.screen, self.restart, mode="6x6")

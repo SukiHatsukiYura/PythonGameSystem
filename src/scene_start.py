@@ -21,7 +21,7 @@ class StartScene(scene.Scene):
         self.icon = pygame.image.load(self.bg_path)
         self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 20)  # 设置文本字体
 
-    def draw(self):  # 绘制场景
+    def Draw(self):  # 绘制场景
         self.screen.fill((0, 0, 0))  # 填充背景色,清屏
         bg = pygame.image.load(self.bg_path).convert()  # 加载背景图片
         scaled_bg = pygame.transform.smoothscale(bg, self.size)  # 缩放背景图片
@@ -33,7 +33,7 @@ class StartScene(scene.Scene):
         self.screen.blit(self.text_font.render("Enter To Start", True, (0, 0, 0)), (332, 373))
         self.screen.blit(self.text_font.render("ESC To Quit", True, (0, 0, 0)), (344, 493))
 
-    def handle_event(self):  # 处理事件
+    def Handle_Event(self):  # 处理事件
         self.btn_start.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_mode")
         self.btn_quit.btn_click(self.screen, pygame.quit, exit)
         if pygame.event.poll().type == pygame.KEYDOWN:

@@ -95,7 +95,7 @@ class GameSudoku(scene.Scene):
         self.title = "数独"  # 设置标题
         self.icon = pygame.image.load(self.icon_path)  # 设置图标
 
-    def draw(self):
+    def Draw(self):
         self.screen.fill((255, 255, 235))
         self.draw_selected_grid()
         self.draw_number()
@@ -208,7 +208,7 @@ class GameSudoku(scene.Scene):
         elif self.CurrentGrid.num == 0:
             self.CurrentGrid.color = (135, 206, 235)
 
-    def handle_event(self):
+    def Handle_Event(self):
         """
         处理事件
         """
