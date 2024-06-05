@@ -11,8 +11,8 @@ class Block:
         self.x = x
         self.y = y
         self.block_size = block_size  # 方块大小
-        self.screen_width = screen_width
-        self.screen_height = screen_height
+        self.screen_width = block_size * 10
+        self.screen_height = block_size * 20
 
         self.shapes = [[[1, 1, 1, 1]], [[1, 1, 1], [0, 1, 0]],
                        [[1, 1, 1], [1, 0, 0]], [[1, 1, 0], [0, 1, 1]],
@@ -118,11 +118,8 @@ class GameTetris(scene.Scene):
 
     def __init__(self):
         # 方块相关参数
-        self.row_cells = 10  # 行数
-        self.col_cells = 20  # 列数
         self.block_size = 35  # 方块大小
         self.block_speed = 0.8  # 方块下落速度
-        self.rotation = 0  # 用于跟踪方块的旋转状态
         # 界面显示相关参数
         self.board = [[0 for _ in range(350 // 35)] for _ in range(700 // 35)]
         self.screen_width = 350
@@ -131,7 +128,6 @@ class GameTetris(scene.Scene):
         self.clock = pygame.time.Clock()
         self.fall_time = 0  # 用于跟踪方块的下落时间
         self.paused = False  # 游戏是否暂停
-        self.block = Block(self.board)  # 俄罗斯方块对象
         self.current_block = Block(self.board)  # 初始化当前的方块
         self.next_block = Block(self.board)  # 初始化下一个要下落的方块
         super().__init__()
