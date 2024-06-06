@@ -21,15 +21,9 @@ class Button:
     font_name = None  # 字体名称，默认为黑体
     font = None  # 字体对象
 
-    def __init__(self,
-                 x,
-                 y,
-                 width,
-                 height,
-                 color,
-                 text,
-                 text_color,
-                 font_size,
+    def __init__(self, x, y,
+                 width, height, color,
+                 text, text_color, font_size,
                  font_name=pygame.font.match_font("SimHei")):
         # 初始化按钮属性
         pygame.init()

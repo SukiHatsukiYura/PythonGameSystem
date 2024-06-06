@@ -12,11 +12,11 @@ class ModeScene(scene.Scene):
     icon_2048 = "img/2048.jpg"
     icon_sudoku = "img/sudoku.jpg"
     icon_gobang = "img/gobang.jpg"
-    btn_2048 = button.Button(200, 40, 500, 120, (255, 255, 255), "2048",
+    btn_2048 = button.Button(200, 40, 500, 120, (255, 255, 255), "1-2048",
                              (0, 0, 0), 50)
-    btn_sudoku = button.Button(200, 185, 500, 120, (255, 255, 255), "数独",
+    btn_sudoku = button.Button(200, 185, 500, 120, (255, 255, 255), "2-数独",
                                (0, 0, 0), 50)
-    btn_tetris = button.Button(200, 330, 500, 120, (255, 255, 255), "俄罗斯方块",
+    btn_tetris = button.Button(200, 330, 500, 120, (255, 255, 255), "3-俄罗斯方块",
                                (0, 0, 0), 50)
     btn_back = button.Button(50, 490, 200, 100, (255, 255, 255), "返 回",
                              (0, 0, 0), 50)
@@ -45,22 +45,22 @@ class ModeScene(scene.Scene):
 
     def Handle_Event(self):  # 处理事件
         # 选择跳转2048游戏
-        self.btn_2048.btn_click(self.screen,
-                                sm.scenemanager.change_scene,
-                                mode="scene_2048")
-        # 选择跳转五子棋游戏
-        self.btn_tetris.btn_click(self.screen,
-                                  sm.scenemanager.change_scene,
-                                  mode="scene_tetris")
+        self.btn_2048.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_2048")
         # 选择跳转数独游戏
-        self.btn_sudoku.btn_click(self.screen,
-                                  sm.scenemanager.change_scene,
-                                  mode="scene_sudoku")
+        self.btn_sudoku.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_sudoku")
+        # 选择跳转俄罗斯方块游戏
+        self.btn_tetris.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_tetris")
         # 选择返回
-        self.btn_back.btn_click(self.screen,
-                                sm.scenemanager.change_scene,
-                                mode="scene_start")
-
-        if pygame.event.poll().type == pygame.KEYDOWN:
-            if pygame.key.get_pressed()[pygame.K_ESCAPE]:  # 按下ESC键
+        self.btn_back.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_start")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 sm.scenemanager.change_scene("scene_start")
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    sm.scenemanager.change_scene("scene_start")
+                if event.key == pygame.K_1:
+                    sm.scenemanager.change_scene("scene_2048")
+                if event.key == pygame.K_2:
+                    sm.scenemanager.change_scene("scene_sudoku")
+                if event.key == pygame.K_3:
+                    sm.scenemanager.change_scene("scene_tetris")

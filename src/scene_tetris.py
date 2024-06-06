@@ -29,9 +29,7 @@ class Block:
         ]
         self.rotation = 0  # 方块旋转状态
         self.shape_weigths = [2, 1, 1, 1, 1, 1, 1, 2, 1]
-        self.shape = random.choices(self.shapes,
-                                    weights=self.shape_weigths,
-                                    k=1)[0]
+        self.shape = random.choices(self.shapes, weights=self.shape_weigths, k=1)[0]
         # self.shape = random.choice(self.shapes)
 
         # 颜色相关参数
@@ -65,28 +63,32 @@ class Block:
                     pygame.draw.rect(screen, (128, 128, 128),
                                      (self.x * self.block_size + j * self.block_size,
                                       (self.y + y_offset) * self.block_size + i * self.block_size,
-                                      self.block_size, self.block_size,
-                                      ))
+                                      self.block_size, self.block_size))
 
     def calculate_shadow_offset(self):
+        # 计算阴影的偏移量
         y_offset = 0
-        while self.can_move(0, y_offset + 1, self.board):
-            y_offset += 1
-        return y_offset
+        while self.can_move(0, y_offset + 1, self.board):  # 当可以向下移动时
+            y_offset += 1  # 增加偏移量直到无法向下移动
+        return y_offset  # 返回y方向偏移量
 
     def can_move(self, dx, dy, board):
+        # 检查当前方块是否能够在指定的偏移量下移动到新位置
         for i in range(len(self.shape)):
             for j in range(len(self.shape[i])):
                 if self.shape[i][j] == 1:
                     new_x = self.x + j + dx
                     new_y = self.y + i + dy
+                    # 检查新位置是否超出边界或者与已有方块碰撞
                     if self.is_out_of_bound(new_x, new_y, board) or self.is_collision(new_x, new_y, board):
                         return False
         return True
 
+    # 检查坐标是否超出边界
     def is_out_of_bound(self, x, y, board):
         return x < 0 or x >= len(board[0]) or y >= len(board)
 
+    # 检查是否发生了碰撞
     def is_collision(self, x, y, board):
         return y >= 0 and board[y][x] != 0
 
@@ -115,14 +117,12 @@ class GameTetris(scene.Scene):
 
     size = (350 + 35 * 4 + 40, 700)
     title = "俄罗斯方块"
-    btn_back = button.Button(350 + 10, 630, 160, 60, (255, 255, 255), "返回",
-                             (0, 0, 0), 30)
-    btn_restart = button.Button(350 + 10, 560, 160, 60, (255, 255, 255),
-                                "重新开始", (0, 0, 0), 30)
-    btn_speed_add = button.Button(350 + 10, 490, 75, 60, (255, 255, 255),
-                                  "速度+", (255, 0, 0), 22)
-    btn_speed_reduce = button.Button(350 + 10 + 85, 490, 75, 60,
-                                     (255, 255, 255), "速度-", (50, 205, 50), 22)
+    black = (0, 0, 0)
+    white = (255, 255, 255)
+    btn_back = button.Button(350 + 10, 630, 160, 60, white, "返回", black, 30)
+    btn_restart = button.Button(350 + 10, 560, 160, 60, white, "重新开始", black, 30)
+    btn_speed_add = button.Button(350 + 10, 490, 75, 60, white, "速度+", (255, 0, 0), 22)
+    btn_speed_reduce = button.Button(350 + 10 + 85, 490, 75, 60, white, "速度-", (50, 205, 50), 22)
 
     def __init__(self):
         # 方块相关参数
@@ -151,8 +151,7 @@ class GameTetris(scene.Scene):
 
     def Draw(self):
         self.screen.fill((255, 235, 205))
-        # 绘制分隔线
-        pygame.draw.line(self.screen, (0, 0, 0), (350, 0), (350, 700), 2)
+        self.draw_line()
 
         # 绘制固定的方块
         for y, row in enumerate(self.board):
@@ -170,6 +169,15 @@ class GameTetris(scene.Scene):
         # 绘制分数
         self.draw_score(self.screen)
 
+    def draw_line(self):
+        # 绘制网格线
+        for i in range(-1, self.screen_width+1, self.block_size):
+            pygame.draw.line(self.screen, (200, 200, 200), (i, 0), (i, 700), 2)
+        for i in range(-1, self.screen_height+1, self.block_size):
+            pygame.draw.line(self.screen, (200, 200, 200), (0, i), (350, i), 2)
+        # 绘制分隔线
+        pygame.draw.line(self.screen, (0, 0, 0), (350, 0), (350, 700), 2)
+
     def draw_next_block(self, screen):
         next_block_x = self.screen_width + 20
         next_block_y = 50
@@ -181,27 +189,15 @@ class GameTetris(scene.Scene):
                                       next_block_y + i * self.block_size,
                                       self.block_size, self.block_size))
         # 绘制包围下一个方块的框
-        pygame.draw.rect(
-            screen,
-            (0, 0, 0),
-            (
-                next_block_x - 20,
-                next_block_y - 10,
-                self.block_size * 4 + 40,
-                self.block_size * 4 + 20,
-            ),
-            2,
-        )
+        pygame.draw.rect(screen, (0, 0, 0),
+                         (next_block_x - 20, next_block_y - 10,
+                          self.block_size * 4 + 40, self.block_size * 4 + 20), 2)
         # 绘制文本
-        screen.blit(self.text_font.render("下一个方块", True, (0, 0, 0)),
-                    (next_block_x + 10, 8))
+        screen.blit(self.text_font.render("下一个方块", True, (0, 0, 0)), (next_block_x + 10, 8))
 
         # 绘制速度
-        screen.blit(
-            self.text_font.render("速度:" + str(11 - self.block_speed), True,
-                                  (0, 0, 0)),
-            (self.screen_width + 5, 270),
-        )
+        screen.blit(self.text_font.render("速度:" + str(11 - self.block_speed), True, (0, 0, 0)),
+                    (self.screen_width + 5, 270))
 
     # 绘制按键操作说明
     def key_help(self, screen):
@@ -221,16 +217,9 @@ class GameTetris(scene.Scene):
     # 绘制分数
     def draw_score(self, screen):
         # 当前分数
-        screen.blit(
-            self.text_font.render("分数:" + str(self.score), True, (0, 0, 0)),
-            (self.screen_width + 5, 210),
-        )
+        screen.blit(self.text_font.render("分数:" + str(self.score), True, (0, 0, 0)), (self.screen_width + 5, 210))
         # 最高分
-        screen.blit(
-            self.text_font.render("最高分:" + str(self.high_score), True,
-                                  (0, 0, 0)),
-            (self.screen_width + 5, 240),
-        )
+        screen.blit(self.text_font.render("最高分:" + str(self.high_score), True, (0, 0, 0)), (self.screen_width + 5, 240))
 
     def generate_next_block(self):
         self.current_block = self.next_block  # 当前方块变为下一个方块
@@ -241,12 +230,9 @@ class GameTetris(scene.Scene):
         self.score += 10
         if self.score > self.high_score:
             self.high_score = self.score
-            self.save_score()
-
-    # 保存最高分
-    def save_score(self):
-        with open("score/score_tetris.txt", "w", encoding="utf-8") as f:
-            f.write(str(self.high_score))
+            # 保存最高分
+            with open("score/score_tetris.txt", "w", encoding="utf-8") as f:
+                f.write(str(self.high_score))
 
     def Handle_Event(self):
         self.btn_back.btn_click(self.screen,
@@ -263,6 +249,9 @@ class GameTetris(scene.Scene):
                 # 空格暂停游戏
                 if event.key == pygame.K_SPACE:
                     self.paused = not self.paused
+                # ESC退出游戏,返回菜单
+                if event.key == pygame.K_ESCAPE:
+                    sm.scenemanager.change_scene("scene_mode")
             if event.type == pygame.QUIT:
                 sm.scenemanager.change_scene("scene_mode")
         if not self.paused and not self.check_game_over():
@@ -295,7 +284,7 @@ class GameTetris(scene.Scene):
             current_time = pygame.time.get_ticks()
 
             time_interval = current_time - self.fall_time
-            if time_interval > self.block_speed * 50:
+            if time_interval > self.block_speed * 80:
                 self.fall_time = current_time
                 if not self.current_block.move(0, 1):
                     # 触底则固定方块并更新游戏区域数组
