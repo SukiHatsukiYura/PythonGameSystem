@@ -16,13 +16,24 @@ class Block:
         self.screen_width = block_size * 10
         self.screen_height = block_size * 20
 
-        self.shapes = [[[1, 1, 1, 1]], [[1, 1, 1], [0, 1, 0]],
-                       [[1, 1, 1], [1, 0, 0]], [[1, 1, 0], [0, 1, 1]],
-                       [[1, 1, 0], [1, 1, 0]], [[0, 1, 1], [1, 1, 0]],
-                       [[1, 1], [1, 1]]]
-        self.shape = random.choice(self.shapes)
+        self.shapes = [
+            [[1, 1, 1, 1]],
+            [[1, 1, 1], [0, 1, 0]],
+            [[1, 1, 1], [1, 0, 0]],
+            [[1, 1, 1], [0, 0, 1]],
+            [[1, 1, 0], [0, 1, 1]],
+            [[0, 1, 1], [1, 1, 0]],
+            [[1, 1], [1, 1]],
+            [[1, 1], [1, 0]],
+            [[1]]
+        ]
+        self.rotation = 0  # 方块旋转状态
+        self.shape_weigths = [2, 1, 1, 1, 1, 1, 1, 2, 1]
+        self.shape = random.choices(self.shapes,
+                                    weights=self.shape_weigths,
+                                    k=1)[0]
+        # self.shape = random.choice(self.shapes)
 
-        self.shuffle_shapes()
         # 颜色相关参数
         self.WHITE = (255, 255, 255)
         self.GRAY = (200, 200, 200)
@@ -33,25 +44,17 @@ class Block:
         self.GREEN = (0, 255, 0)
         self.BLUE = (0, 0, 255)
         self.ORANGE = (255, 165, 0)
-        self.colors = [
-            self.CYAN, self.YELLOW, self.PURPLE, self.GREEN, self.BLUE,
-            self.ORANGE, self.RED
-        ]
+        self.colors = [self.CYAN, self.YELLOW, self.PURPLE, self.GREEN, self.BLUE, self.ORANGE, self.RED]
         self.color = random.choice(self.colors)
-        self.rotation = 0  # 用于跟踪方块的旋转状态
-
-    def shuffle_shapes(self):
-        random.shuffle(self.shapes)
 
     def draw(self, screen):
         for i in range(len(self.shape)):
             for j in range(len(self.shape[i])):
                 if self.shape[i][j] == 1:
-                    pygame.draw.rect(
-                        screen, self.color,
-                        (self.x * self.block_size + j * self.block_size,
-                         self.y * self.block_size + i * self.block_size,
-                         self.block_size, self.block_size))
+                    pygame.draw.rect(screen, self.color,
+                                     (self.x * self.block_size + j * self.block_size,
+                                      self.y * self.block_size + i * self.block_size,
+                                      self.block_size, self.block_size))
         self.draw_shadow(screen)
 
     def draw_shadow(self, screen):
@@ -59,11 +62,11 @@ class Block:
         for i in range(len(self.shape)):
             for j in range(len(self.shape[i])):
                 if self.shape[i][j] == 1:
-                    pygame.draw.rect(
-                        screen, (128, 128, 128),
-                        (self.x * self.block_size + j * self.block_size,
-                         (self.y + y_offset) * self.block_size + i * self.block_size,
-                         self.block_size, self.block_size))
+                    pygame.draw.rect(screen, (128, 128, 128),
+                                     (self.x * self.block_size + j * self.block_size,
+                                      (self.y + y_offset) * self.block_size + i * self.block_size,
+                                      self.block_size, self.block_size,
+                                      ))
 
     def calculate_shadow_offset(self):
         y_offset = 0
@@ -110,12 +113,16 @@ class Block:
 
 class GameTetris(scene.Scene):
 
-    size = (350+35*4+40, 700)
+    size = (350 + 35 * 4 + 40, 700)
     title = "俄罗斯方块"
-    btn_back = button.Button(350+10, 630, 160, 60, (255, 255, 255), "返回", (0, 0, 0), 30)
-    btn_restart = button.Button(350+10, 560, 160, 60, (255, 255, 255), "重新开始", (0, 0, 0), 30)
-    btn_speed_add = button.Button(350+10, 490, 75, 60, (255, 255, 255), "速度+", (255, 0, 0), 22)
-    btn_speed_reduce = button.Button(350+10+85, 490, 75, 60, (255, 255, 255), "速度-", (50, 205, 50), 22)
+    btn_back = button.Button(350 + 10, 630, 160, 60, (255, 255, 255), "返回",
+                             (0, 0, 0), 30)
+    btn_restart = button.Button(350 + 10, 560, 160, 60, (255, 255, 255),
+                                "重新开始", (0, 0, 0), 30)
+    btn_speed_add = button.Button(350 + 10, 490, 75, 60, (255, 255, 255),
+                                  "速度+", (255, 0, 0), 22)
+    btn_speed_reduce = button.Button(350 + 10 + 85, 490, 75, 60,
+                                     (255, 255, 255), "速度-", (50, 205, 50), 22)
 
     def __init__(self):
         # 方块相关参数
@@ -124,37 +131,44 @@ class GameTetris(scene.Scene):
         # 界面显示相关参数
         self.screen_width = self.block_size * 10
         self.screen_height = self.block_size * 20
-        self.board = [[0 for _ in range(self.screen_width // self.block_size)] for _ in range(self.screen_height // self.block_size)]
+        # 网格
+        self.board = [[0 for _ in range(self.screen_width // self.block_size)]
+                      for _ in range(self.screen_height // self.block_size)]
         self.score = 0  # 分数
         self.high_score = 0  # 最高分
-        with open("score/score_tetris.txt", "r") as f:
-            self.high_score = int(f.read())
+        try:
+            with open("score/score_tetris.txt", "r") as f:
+                self.high_score = int(f.read())
+        except FileNotFoundError:
+            print("文件不存在")
         self.fall_time = 0  # 用于跟踪方块的下落时间
         self.paused = True  # 游戏是否暂停
         self.current_block = Block(self.board)  # 初始化当前的方块
         self.next_block = Block(self.board)  # 初始化下一个要下落的方块
-        self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 24)  # 字体
-        self.key_img = pygame.image.load("img/ydlr.jpg")
+        self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"),
+                                          24)  # 字体
         super().__init__()
 
     def Draw(self):
         self.screen.fill((255, 235, 205))
-        # 绘制按键图标
-        self.screen.blit(self.key_img, (self.screen_width + 20, 300))
         # 绘制分隔线
         pygame.draw.line(self.screen, (0, 0, 0), (350, 0), (350, 700), 2)
-            
-        # 绘制固定的方块        
+
+        # 绘制固定的方块
         for y, row in enumerate(self.board):
             for x, color in enumerate(row):
                 if color != 0:
                     pygame.draw.rect(self.screen, color,
                                      (x * self.block_size, y * self.block_size,
                                       self.block_size, self.block_size))
+        # 绘制当前方块
         self.current_block.draw(self.screen)
+        # 绘制下一个方块
         self.draw_next_block(self.screen)
+        # 绘制按键操作说明
+        self.key_help(self.screen)
+        # 绘制分数
         self.draw_score(self.screen)
-        self.draw_high_score(self.screen)
 
     def draw_next_block(self, screen):
         next_block_x = self.screen_width + 20
@@ -162,52 +176,87 @@ class GameTetris(scene.Scene):
         for i in range(len(self.next_block.shape)):
             for j in range(len(self.next_block.shape[i])):
                 if self.next_block.shape[i][j] == 1:
-                    pygame.draw.rect(
-                        screen, self.next_block.color,
-                        (next_block_x + j * self.block_size,
-                         next_block_y + i * self.block_size,
-                         self.block_size, self.block_size))
+                    pygame.draw.rect(screen, self.next_block.color,
+                                     (next_block_x + j * self.block_size,
+                                      next_block_y + i * self.block_size,
+                                      self.block_size, self.block_size))
         # 绘制包围下一个方块的框
-        pygame.draw.rect(screen, (0, 0, 0),
-                         (next_block_x - 20, next_block_y - 10,
-                          self.block_size * 4 + 40, self.block_size * 4 + 20), 2)
-        text = self.text_font.render("下一个方块", True, (0, 0, 0))
+        pygame.draw.rect(
+            screen,
+            (0, 0, 0),
+            (
+                next_block_x - 20,
+                next_block_y - 10,
+                self.block_size * 4 + 40,
+                self.block_size * 4 + 20,
+            ),
+            2,
+        )
         # 绘制文本
-        screen.blit(text, (next_block_x+10, 8))
+        screen.blit(self.text_font.render("下一个方块", True, (0, 0, 0)),
+                    (next_block_x + 10, 8))
 
         # 绘制速度
-        text = self.text_font.render("速度:" + str(11-self.block_speed), True, (0, 0, 0))
-        screen.blit(text, (self.screen_width + 5, 270))
+        screen.blit(
+            self.text_font.render("速度:" + str(11 - self.block_speed), True,
+                                  (0, 0, 0)),
+            (self.screen_width + 5, 270),
+        )
+
+    # 绘制按键操作说明
+    def key_help(self, screen):
+        screen.blit(self.text_font.render("W/↑:方块旋转", True, (0, 0, 0)),
+                    (355, 300))
+        screen.blit(self.text_font.render("A/←:方块左移", True, (0, 0, 0)),
+                    (355, 330))
+        screen.blit(self.text_font.render("D/→:方块右移", True, (0, 0, 0)),
+                    (355, 360))
+        screen.blit(self.text_font.render("S/↓:方块下移", True, (0, 0, 0)),
+                    (355, 390))
+        screen.blit(self.text_font.render("空格:暂停/继续", True, (0, 0, 0)),
+                    (355, 420))
+        screen.blit(self.text_font.render("回车:强降", True, (0, 0, 0)),
+                    (355, 450))
 
     # 绘制分数
     def draw_score(self, screen):
-        text = self.text_font.render("分数:" + str(self.score), True, (0, 0, 0))
-        screen.blit(text, (self.screen_width + 5, 210))
-
-    # 绘制最高分
-    def draw_high_score(self, screen):
-        text = self.text_font.render("最高分:" + str(self.high_score), True, (0, 0, 0))
-        screen.blit(text, (self.screen_width + 5, 240))
+        # 当前分数
+        screen.blit(
+            self.text_font.render("分数:" + str(self.score), True, (0, 0, 0)),
+            (self.screen_width + 5, 210),
+        )
+        # 最高分
+        screen.blit(
+            self.text_font.render("最高分:" + str(self.high_score), True,
+                                  (0, 0, 0)),
+            (self.screen_width + 5, 240),
+        )
 
     def generate_next_block(self):
         self.current_block = self.next_block  # 当前方块变为下一个方块
         self.next_block = Block(self.board)  # 生成新的下一个方块
 
+    # 更新分数
     def update_score(self):
         self.score += 10
         if self.score > self.high_score:
             self.high_score = self.score
             self.save_score()
 
+    # 保存最高分
     def save_score(self):
         with open("score/score_tetris.txt", "w", encoding="utf-8") as f:
             f.write(str(self.high_score))
 
     def Handle_Event(self):
-        self.btn_back.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_mode")
+        self.btn_back.btn_click(self.screen,
+                                sm.scenemanager.change_scene,
+                                mode="scene_mode")
         self.btn_restart.btn_click(self.screen, self.reset_game)
         self.btn_speed_add.btn_click(self.screen, self.set_speed, mode="add")
-        self.btn_speed_reduce.btn_click(self.screen, self.set_speed, mode="reduce")
+        self.btn_speed_reduce.btn_click(self.screen,
+                                        self.set_speed,
+                                        mode="reduce")
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -256,7 +305,10 @@ class GameTetris(scene.Scene):
                             pygame.time.set_timer(pygame.USEREVENT, 0)
                     self.update_board()
         elif self.check_game_over():
-            messagebox.showinfo("游戏结束", "游戏结束！您的分数为：" + str(self.score)+"\n回车或点击确定按钮重新开始")
+            messagebox.showinfo(
+                "游戏结束",
+                "游戏结束！您的分数为：" + str(self.score) + "\n回车或点击确定按钮重新开始",
+            )
             self.reset_game()
 
     def update_board(self):
@@ -264,8 +316,9 @@ class GameTetris(scene.Scene):
         for i in range(len(self.current_block.shape)):
             for j in range(len(self.current_block.shape[i])):
                 if self.current_block.shape[i][j] == 1:
-                    self.board[self.current_block.y + i][self.current_block.x +
-                                                         j] = self.current_block.color
+                    self.board[self.current_block.y +
+                               i][self.current_block.x +
+                                  j] = self.current_block.color
         clear_rows = []
         for i in range(len(self.board)):
             if all(self.board[i]):
@@ -280,17 +333,17 @@ class GameTetris(scene.Scene):
         for i in range(len(self.board)):
             if all(self.board[i]):
                 del self.board[i]
-                self.board.insert(0, [0 for _ in range(self.screen_width // self.block_size)])
+                self.board.insert(
+                    0,
+                    [0 for _ in range(self.screen_width // self.block_size)])
                 self.update_score()
 
     def set_speed(self, mode):
         match mode:
             case "add":
-                self.block_speed = max(1, self.block_speed-1)
+                self.block_speed = max(1, self.block_speed - 1)
             case "reduce":
-                self.block_speed = min(10, self.block_speed+1)
-            case _:
-                pass
+                self.block_speed = min(10, self.block_speed + 1)
 
     def reset_game(self):
         self.paused = True
