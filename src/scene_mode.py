@@ -11,7 +11,7 @@ class ModeScene(scene.Scene):
     bg_path = "img/bg.jpg"
     icon_2048 = "img/2048.jpg"
     icon_sudoku = "img/sudoku.jpg"
-    icon_gobang = "img/gobang.jpg"
+    icon_tetris = "img/tetris.jpg"
     btn_2048 = button.Button(200, 40, 500, 120, (255, 255, 255), "1-2048",
                              (0, 0, 0), 50)
     btn_sudoku = button.Button(200, 185, 500, 120, (255, 255, 255), "2-数独",
@@ -35,11 +35,11 @@ class ModeScene(scene.Scene):
                          (80, 50))  # 加载2048图标
         self.screen.blit(pygame.image.load(self.icon_sudoku),
                          (80, 195))  # 加载数独图标
-        self.screen.blit(pygame.image.load(self.icon_gobang),
-                         (80, 340))  # 加载五子棋图标
+        self.screen.blit(pygame.image.load(self.icon_tetris),
+                         (80, 340))  # 加载俄罗斯方块图标
         self.btn_2048.draw(self.screen, 120)  # 画出2048按钮
-        self.btn_tetris.draw(self.screen, 120)  # 画出五子棋按钮
         self.btn_sudoku.draw(self.screen, 120)  # 画出数独按钮
+        self.btn_tetris.draw(self.screen, 120)  # 画出俄罗斯方块按钮
         self.btn_back.draw(self.screen, 120)  # 画出返回按钮
         self.screen.blit(self.text_font.render("ESC To Back", True, (0, 0, 0)), (95, 564))
 

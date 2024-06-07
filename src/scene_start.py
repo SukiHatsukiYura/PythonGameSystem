@@ -17,10 +17,6 @@ class StartScene(scene.Scene):
     btn_quit = button.Button(300, 420, 200, 100, (255, 255, 255), "退 出",
                              (0, 0, 0), 50)  # 退出按钮
 
-    pygame.mixer.music.load('mus/03_悪役令嬢の顛末.mp3')  # 加载背景音乐
-    pygame.mixer.music.set_volume(0.5)  # 设置音量
-    pygame.mixer.music.play(-1)  # 循环播放背景音乐
-
     def __init__(self):
         super().__init__()
         self.icon = pygame.image.load(self.bg_path)
@@ -44,10 +40,6 @@ class StartScene(scene.Scene):
         if pygame.event.poll().type == pygame.KEYDOWN:
             if pygame.key.get_pressed()[pygame.K_RETURN]:  # 按下回车键
                 sm.scenemanager.change_scene("scene_mode")  # 切换到游戏场景
-            elif pygame.key.get_pressed()[pygame.K_m]:  # 按下m键
-                pygame.mixer.music.pause()  # 暂停背景音乐
-            elif pygame.key.get_pressed()[pygame.K_n]:  # 按下n键
-                pygame.mixer.music.unpause()  # 恢复背景音乐
             elif pygame.key.get_pressed()[pygame.K_ESCAPE]:  # 按下ESC键
                 pygame.quit()  # 退出pygame
                 exit()  # 退出程序
