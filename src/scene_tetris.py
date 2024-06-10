@@ -70,26 +70,15 @@ class Block:
         # 绘制该方块在底部的阴影
         self.draw_shadow(screen)
 
-    # def draw_shadow(self, screen):
-    #     #
-    #     y_offset = self.calculate_shadow_offset()
-    #     for i in range(len(self.shape)):
-    #         for j in range(len(self.shape[i])):
-    #             if self.shape[i][j] == 1:
-    #                 pygame.draw.rect(screen, (128, 128, 128),
-    #                                  (self.x * self.block_size + j * self.block_size,
-    #                                   (self.y + y_offset) * self.block_size + i * self.block_size,
-    #                                   self.block_size, self.block_size))
-
     def draw_shadow(self, screen):
         # 计算阴影的垂直偏移量
         y_offset = self.calculate_shadow_offset()
-        
+
         # 创建一个与方块大小相同的表面作为阴影
-        shadow_rect = pygame.Surface((self.block_size, self.block_size))  
+        shadow_rect = pygame.Surface((self.block_size, self.block_size))
         shadow_rect.set_alpha(100)  # 设置阴影透明度
         shadow_rect.fill(self.color)  # 填充颜色与方块颜色相同的颜色
-        
+
         # 遍历方块形状的每个单元格
         for i in range(len(self.shape)):
             for j in range(len(self.shape[i])):
@@ -276,14 +265,10 @@ class GameTetris(scene.Scene):
                 f.write(str(self.high_score))
 
     def Handle_Event(self):
-        self.btn_back.btn_click(self.screen,
-                                sm.scenemanager.change_scene,
-                                mode="scene_mode")
+        self.btn_back.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_mode")
         self.btn_restart.btn_click(self.screen, self.reset_game)
         self.btn_speed_add.btn_click(self.screen, self.set_speed, mode="add")
-        self.btn_speed_reduce.btn_click(self.screen,
-                                        self.set_speed,
-                                        mode="reduce")
+        self.btn_speed_reduce.btn_click(self.screen, self.set_speed, mode="reduce")
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.KEYDOWN:
