@@ -21,7 +21,7 @@ class Block:
         :param y: 方块左上角y坐标
         :param block_size: 方块大小
         """
-        self.board = board
+        self.board = board #
         self.x = x
         self.y = y
         self.block_size = block_size  # 方块大小
