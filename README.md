@@ -12,4 +12,10 @@
 
 
 游戏截图：
-![Image text](https://github.com/SukiHatsukiYura/PythonGameSystem/tree/main/img/bg.jpg)
+![Image text](https://github.com/SukiHatsukiYura/PythonGameSystem/tree/main/img/bg.jpg)  
+
+![Image text](https://github.com/SukiHatsukiYura/PythonGameSystem/tree/main/img/2048.jpg) 
+
+![Image text](https://github.com/SukiHatsukiYura/PythonGameSystem/tree/main/img/sudoku.jpg) 
+
+![Image text](https://github.com/SukiHatsukiYura/PythonGameSystem/tree/main/img/tetris.jpg) 
