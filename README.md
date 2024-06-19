@@ -11,7 +11,8 @@
 2.0 已打包成exe文件，可直接运行  
 
 
-游戏截图：
+游戏截图： 
+
 ![Image text](https://github.com/SukiHatsukiYura/PythonGameSystem/tree/main/img/bg.jpg)  
 
 ![Image text](https://github.com/SukiHatsukiYura/PythonGameSystem/tree/main/img/2048.jpg) 
