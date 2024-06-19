@@ -37,7 +37,7 @@ class SceneManager:
                 scene_name == "scene_tetris":
             pygame.display.set_mode(self.current_scene.size)
             pygame.display.set_icon(self.current_scene.icon)
-            pygame.display.set_caption(self.current_scene.title)  # 设置标题        
+            pygame.display.set_caption(self.current_scene.title)  # 设置标题
         else:
             pygame.display.set_caption(self.current_scene.title)  # 设置标题
 
@@ -54,6 +54,7 @@ class SceneManager:
         绘制当前场景
         """
         self.current_scene.Draw()
+
 
 # 创建场景管理器对象
 scenemanager = SceneManager()

@@ -3,7 +3,6 @@ import random
 import scene
 import scene_manager as sm
 import button
-import tkinter as tk
 from tkinter import messagebox
 import json
 
@@ -30,16 +29,11 @@ class Game2048(scene.Scene):
     high_scroe_5x5: int  # 5x5最高分
     high_scroe_6x6: int  # 6x6最高分
     # 定义按钮
-    btn_4x4 = button.Button(660, 250, 170, 70, (237, 224, 200), "4x4",
-                            (0, 0, 0), 32)
-    btn_5x5 = button.Button(660, 330, 170, 70, (237, 224, 200), "5x5",
-                            (0, 0, 0), 32)
-    btn_6x6 = button.Button(660, 410, 170, 70, (237, 224, 200), "6x6",
-                            (0, 0, 0), 32)
-    btn_restart = button.Button(660, 490, 170, 70, (237, 224, 200), "新局",
-                                (0, 0, 0), 32)
-    btn_back = button.Button(660, 570, 170, 70, (237, 224, 200), "返回",
-                             (0, 0, 0), 32)
+    btn_4x4 = button.Button(660, 250, 170, 70, (237, 224, 200), "4x4", (0, 0, 0), 32)
+    btn_5x5 = button.Button(660, 330, 170, 70, (237, 224, 200), "5x5", (0, 0, 0), 32)
+    btn_6x6 = button.Button(660, 410, 170, 70, (237, 224, 200), "6x6", (0, 0, 0), 32)
+    btn_restart = button.Button(660, 490, 170, 70, (237, 224, 200), "新局", (0, 0, 0), 32)
+    btn_back = button.Button(660, 570, 170, 70, (237, 224, 200), "返回", (0, 0, 0), 32)
     icon_path = "img/2048.jpg"
 
     def __init__(self):
@@ -57,17 +51,19 @@ class Game2048(scene.Scene):
         self.GRID_COLOR = (255, 255, 255)
         self.score = 0
         # 读取最高分
-        with open("score/score_2048.json", encoding="utf-8") as f:
-            self.score_dict = json.load(f)
-            self.high_scroe_4x4 = self.score_dict["high_scroe_4x4"]
-            self.high_scroe_5x5 = self.score_dict["high_scroe_5x5"]
-            self.high_scroe_6x6 = self.score_dict["high_scroe_6x6"]
+        try:
+            with open("score/score_2048.json", encoding="utf-8") as f:
+                self.score_dict = json.load(f)
+                self.high_scroe_4x4 = self.score_dict["high_scroe_4x4"]
+                self.high_scroe_5x5 = self.score_dict["high_scroe_5x5"]
+                self.high_scroe_6x6 = self.score_dict["high_scroe_6x6"]
+        except FileNotFoundError:
+            print("文件不存在")
 
         self.grid = [[0] * self.GRID_SIZE for _ in range(self.GRID_SIZE)]
 
         self.text_font = pygame.font.Font(pygame.font.match_font("SimHei"), 32)
-        self.text_sorce = pygame.font.Font(pygame.font.match_font("SimHei"),
-                                           24)
+        self.text_sorce = pygame.font.Font(pygame.font.match_font("SimHei"), 24)
         self.grid_font = pygame.font.Font(pygame.font.match_font("SimHei"), 48)
         # self.screen = pygame.display.set_mode(self.size)
         super().__init__()
@@ -95,11 +91,10 @@ class Game2048(scene.Scene):
             for col in range(self.GRID_SIZE):
                 cell_value = self.grid[row][col]
                 cell_color = self.get_cell_color(cell_value)
-                cell_rect = pygame.Rect(
-                    col * (self.CELL_SIZE + 10) + 10,  # 绘制单元格
-                    row * (self.CELL_SIZE + 10) + 10,
-                    self.CELL_SIZE,
-                    self.CELL_SIZE)
+                cell_rect = pygame.Rect(col * (self.CELL_SIZE + 10) + 10,  # 绘制单元格
+                                        row * (self.CELL_SIZE + 10) + 10,
+                                        self.CELL_SIZE,
+                                        self.CELL_SIZE)
                 pygame.draw.rect(self.screen, cell_color, cell_rect)
                 if cell_value != 0:
                     self.draw_text(self.screen, str(cell_value), cell_rect)
@@ -107,24 +102,16 @@ class Game2048(scene.Scene):
     def draw_score(self):
         # 绘制积分
         score_text = self.text_font.render("当前分数:", True, (255, 225, 255))
-        score_text_num = self.text_sorce.render(str(self.score), True,
-                                                self.TEXT_COLOR)
+        score_text_num = self.text_sorce.render(str(self.score), True, self.TEXT_COLOR)
         # 绘制最高分
 
         self.screen.blit(score_text, (660, 10))
         self.screen.blit(score_text_num, (660, 50))
 
-        self.screen.blit(self.text_font.render("最高分数:", True, (255, 225, 255)),
-                         (660, 90))
-        self.screen.blit(
-            self.text_sorce.render("4x4:" + str(self.high_scroe_4x4).strip(),
-                                   True, self.TEXT_COLOR), (660, 130))
-        self.screen.blit(
-            self.text_sorce.render("5x5:" + str(self.high_scroe_5x5).strip(),
-                                   True, self.TEXT_COLOR), (660, 170))
-        self.screen.blit(
-            self.text_sorce.render("6x6:" + str(self.high_scroe_6x6).strip(),
-                                   True, self.TEXT_COLOR), (660, 210))
+        self.screen.blit(self.text_font.render("最高分数:", True, (255, 225, 255)), (660, 90))
+        self.screen.blit(self.text_sorce.render("4x4:" + str(self.high_scroe_4x4).strip(), True, self.TEXT_COLOR), (660, 130))
+        self.screen.blit(self.text_sorce.render("5x5:" + str(self.high_scroe_5x5).strip(), True, self.TEXT_COLOR), (660, 170))
+        self.screen.blit(self.text_sorce.render("6x6:" + str(self.high_scroe_6x6).strip(), True, self.TEXT_COLOR), (660, 210))
 
     def draw_text(self, screen, text, rect):
         # 在单元格内绘制数字
@@ -179,7 +166,6 @@ class Game2048(scene.Scene):
 
     def move_tiles_up(self):
         # 向上移动所有数字块
-
         for col in range(self.GRID_SIZE):
             merged = [False] * self.GRID_SIZE
             for row in range(1, self.GRID_SIZE):
@@ -189,8 +175,7 @@ class Game2048(scene.Scene):
                         self.grid[k - 1][col] = self.grid[k][col]
                         self.grid[k][col] = 0
                         k -= 1
-                    if k > 0 and not merged[k - 1] and self.grid[
-                            k - 1][col] == self.grid[k][col]:
+                    if k > 0 and not merged[k - 1] and self.grid[k - 1][col] == self.grid[k][col]:
                         self.grid[k - 1][col] *= 2
                         self.grid[k][col] = 0
                         merged[k - 1] = True
@@ -203,14 +188,11 @@ class Game2048(scene.Scene):
             for col in range(self.GRID_SIZE - 2, -1, -1):
                 if self.grid[row][col] != 0:
                     k = col
-                    while k < self.GRID_SIZE - 1 and self.grid[row][k +
-                                                                    1] == 0:
+                    while k < self.GRID_SIZE - 1 and self.grid[row][k + 1] == 0:
                         self.grid[row][k + 1] = self.grid[row][k]
                         self.grid[row][k] = 0
                         k += 1
-                    if k < self.GRID_SIZE - 1 and not merged[
-                            k + 1] and self.grid[row][k +
-                                                      1] == self.grid[row][k]:
+                    if k < self.GRID_SIZE - 1 and not merged[k + 1] and self.grid[row][k + 1] == self.grid[row][k]:
                         self.grid[row][k + 1] *= 2
                         self.grid[row][k] = 0
                         merged[k + 1] = True
@@ -223,14 +205,11 @@ class Game2048(scene.Scene):
             for row in range(self.GRID_SIZE - 2, -1, -1):
                 if self.grid[row][col] != 0:
                     k = row
-                    while k < self.GRID_SIZE - 1 and self.grid[k +
-                                                               1][col] == 0:
+                    while k < self.GRID_SIZE - 1 and self.grid[k + 1][col] == 0:
                         self.grid[k + 1][col] = self.grid[k][col]
                         self.grid[k][col] = 0
                         k += 1
-                    if k < self.GRID_SIZE - 1 and not merged[
-                            k + 1] and self.grid[k +
-                                                 1][col] == self.grid[k][col]:
+                    if k < self.GRID_SIZE - 1 and not merged[k + 1] and self.grid[k + 1][col] == self.grid[k][col]:
                         self.grid[k + 1][col] *= 2
                         self.grid[k][col] = 0
                         merged[k + 1] = True
@@ -241,8 +220,7 @@ class Game2048(scene.Scene):
         self.btn_5x5.btn_click(self.screen, self.restart, mode="5x5")
         self.btn_6x6.btn_click(self.screen, self.restart, mode="6x6")
         self.btn_restart.btn_click(self.screen, self.restart, mode=self.mode)
-        self.btn_back.btn_click(self.screen, sm.scenemanager.change_scene,
-                                mode="scene_mode")
+        self.btn_back.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_mode")
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 sm.scenemanager.change_scene("scene_mode")  # 切换到游戏场景
@@ -272,11 +250,9 @@ class Game2048(scene.Scene):
             for col in range(self.GRID_SIZE):
                 if self.grid[row][col] == 0:
                     return False
-                if col < self.GRID_SIZE - 1 and self.grid[row][
-                        col] == self.grid[row][col + 1]:
+                if col < self.GRID_SIZE - 1 and self.grid[row][col] == self.grid[row][col + 1]:
                     return False
-                if row < self.GRID_SIZE - 1 and self.grid[row][
-                        col] == self.grid[row + 1][col]:
+                if row < self.GRID_SIZE - 1 and self.grid[row][col] == self.grid[row + 1][col]:
                     return False
         return True
 

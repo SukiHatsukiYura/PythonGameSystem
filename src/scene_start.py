@@ -12,10 +12,8 @@ class StartScene(scene.Scene):
     size = (800, 633)  # 场景尺寸
     title = "开始"  # 标题
     bg_path = "img/bg.jpg"  # 背景图片路径
-    btn_start = button.Button(300, 300, 200, 100, (255, 255, 255), "开 始",
-                              (0, 0, 0), 50)  # 开始按钮
-    btn_quit = button.Button(300, 420, 200, 100, (255, 255, 255), "退 出",
-                             (0, 0, 0), 50)  # 退出按钮
+    btn_start = button.Button(300, 300, 200, 100, (255, 255, 255), "开 始", (0, 0, 0), 50)  # 开始按钮
+    btn_quit = button.Button(300, 420, 200, 100, (255, 255, 255), "退 出", (0, 0, 0), 50)  # 退出按钮
 
     def __init__(self):
         super().__init__()
@@ -30,6 +28,7 @@ class StartScene(scene.Scene):
 
         self.btn_start.draw(self.screen, 120)  # 画出开始按钮
         self.btn_quit.draw(self.screen, 120)  # 画出退出按钮
+
         # 绘制文本信息
         self.screen.blit(self.text_font.render("Enter To Start", True, (0, 0, 0)), (332, 373))
         self.screen.blit(self.text_font.render("ESC To Quit", True, (0, 0, 0)), (344, 493))
@@ -37,6 +36,7 @@ class StartScene(scene.Scene):
     def Handle_Event(self):  # 处理事件
         self.btn_start.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_mode")
         self.btn_quit.btn_click(self.screen, pygame.quit, exit)
+
         if pygame.event.poll().type == pygame.KEYDOWN:
             if pygame.key.get_pressed()[pygame.K_RETURN]:  # 按下回车键
                 sm.scenemanager.change_scene("scene_mode")  # 切换到游戏场景

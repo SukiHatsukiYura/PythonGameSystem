@@ -109,7 +109,6 @@ class Block:
         return True
 
     # 检查坐标是否超出边界
-
     def is_out_of_bound(self, x, y, board):
         return x < 0 or x >= len(board[0]) or y >= len(board)
 
@@ -117,8 +116,8 @@ class Block:
     def is_collision(self, x, y, board):
         return y >= 0 and board[y][x] != 0
 
+    # 旋转方块的方法
     def rotate(self):
-        # 旋转方块的方法
         # 更新方块旋转状态
         self.rotation = (self.rotation + 1) % len(self.shape)
         old_shape = self.shape
@@ -128,10 +127,10 @@ class Block:
             # 如果旋转后位置无效，恢复原来的形状
             self.shape = old_shape
 
+    # 移动方块的方法
     def move(self, dx, dy):
-        # 移动方块的方法
+        # 如果可以移动，更新方块的位置
         if self.can_move(dx, dy, self.board):
-            # 如果可以移动，更新方块的位置
             self.x += dx
             self.y += dy
             return True
@@ -156,13 +155,14 @@ class GameTetris(scene.Scene):
         self.block_size = 35  # 方块大小
         self.block_speed = 10  # 方块下落速度
         # 界面显示相关参数
-        self.screen_width = self.block_size * 10
-        self.screen_height = self.block_size * 20
+        self.screen_width = self.block_size * 10  # 350
+        self.screen_height = self.block_size * 20  # 700
         # 网格
         self.board = [[0 for _ in range(self.screen_width // self.block_size)]
                       for _ in range(self.screen_height // self.block_size)]
         self.score = 0  # 分数
         self.high_score = 0  # 最高分
+        # 获取最高分
         try:
             with open("score/score_tetris.txt", "r") as f:
                 self.high_score = int(f.read())
@@ -231,26 +231,19 @@ class GameTetris(scene.Scene):
     # 绘制按键操作说明
 
     def key_help(self, screen):
-        screen.blit(self.text_font.render("W/↑:方块旋转", True, (0, 0, 0)),
-                    (355, 300))
-        screen.blit(self.text_font.render("A/←:方块左移", True, (0, 0, 0)),
-                    (355, 330))
-        screen.blit(self.text_font.render("D/→:方块右移", True, (0, 0, 0)),
-                    (355, 360))
-        screen.blit(self.text_font.render("S/↓:方块下移", True, (0, 0, 0)),
-                    (355, 390))
-        screen.blit(self.text_font.render("空格:暂停/继续", True, (0, 0, 0)),
-                    (355, 420))
-        screen.blit(self.text_font.render("回车:强降", True, (0, 0, 0)),
-                    (355, 450))
+        screen.blit(self.text_font.render("W/↑:方块旋转", True, (0, 0, 0)), (355, 300))
+        screen.blit(self.text_font.render("A/←:方块左移", True, (0, 0, 0)), (355, 330))
+        screen.blit(self.text_font.render("D/→:方块右移", True, (0, 0, 0)), (355, 360))
+        screen.blit(self.text_font.render("S/↓:方块下移", True, (0, 0, 0)), (355, 390))
+        screen.blit(self.text_font.render("空格:暂停/继续", True, (0, 0, 0)), (355, 420))
+        screen.blit(self.text_font.render("回车:强降", True, (0, 0, 0)), (355, 450))
 
     # 绘制分数
     def draw_score(self, screen):
-        # 当前分数
         screen.blit(self.text_font.render("分数:" + str(self.score), True, (0, 0, 0)), (self.screen_width + 5, 210))
-        # 最高分
         screen.blit(self.text_font.render("最高分:" + str(self.high_score), True, (0, 0, 0)), (self.screen_width + 5, 240))
 
+    # 生成下一个方块
     def generate_next_block(self):
         self.current_block = self.next_block  # 当前方块变为下一个方块
         self.next_block = Block(self.board)  # 生成新的下一个方块
@@ -287,30 +280,11 @@ class GameTetris(scene.Scene):
                     self.clear_complete_rows()
                     pygame.time.set_timer(pygame.USEREVENT, 0)
                 if event.type == pygame.KEYDOWN:
-                    # w/↑ 方块旋转
-                    if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        self.current_block.rotate()
-                    # a/← 方块左移
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                        self.current_block.move(-1, 0)
-                    # d/→ 方块右移
-                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                        self.current_block.move(1, 0)
-                    # s/↓ 方块下移
-                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        self.current_block.move(0, 1)  # 移动方块直到触底
-                    # enter 方块强降
-                    if event.key == pygame.K_RETURN:
-                        # 一次次地移动方块直到触底
-                        for _ in range(self.screen_height // self.block_size):
-                            if not self.current_block.move(0, 1):
-                                break
-                        self.update_board()
+                    self.move_block(event)
 
             current_time = pygame.time.get_ticks()
-
             time_interval = current_time - self.fall_time
-            if time_interval > self.block_speed * 80:
+            if time_interval > self.block_speed * 120:
                 self.fall_time = current_time
                 if not self.current_block.move(0, 1):
                     # 触底则固定方块并更新游戏区域数组
@@ -325,6 +299,27 @@ class GameTetris(scene.Scene):
                 "游戏结束！您的分数为：" + str(self.score) + "\n回车或点击确定按钮重新开始",
             )
             self.reset_game()
+
+    def move_block(self, event):
+        # w/↑ 方块旋转
+        if event.key == pygame.K_UP or event.key == pygame.K_w:
+            self.current_block.rotate()
+        # a/← 方块左移
+        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+            self.current_block.move(-1, 0)
+        # d/→ 方块右移
+        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+            self.current_block.move(1, 0)
+        # s/↓ 方块下移
+        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            self.current_block.move(0, 1)  # 移动方块直到触底
+        # enter 方块强降
+        if event.key == pygame.K_RETURN:
+            # 一次次地移动方块直到触底
+            for _ in range(self.screen_height // self.block_size):
+                if not self.current_block.move(0, 1):
+                    break
+            self.update_board()
 
     def update_board(self):
         # 更新游戏区域数组
@@ -353,13 +348,15 @@ class GameTetris(scene.Scene):
                     [0 for _ in range(self.screen_width // self.block_size)])
                 self.update_score()
 
+    # 设置速度
     def set_speed(self, mode):
         match mode:
             case "add":
-                self.block_speed = max(1, self.block_speed - 1)
+                self.block_speed = max(-2, self.block_speed - 1)
             case "reduce":
                 self.block_speed = min(10, self.block_speed + 1)
-
+    
+    # 重置游戏
     def reset_game(self):
         self.paused = True
         # 清空游戏区域
@@ -370,8 +367,8 @@ class GameTetris(scene.Scene):
         self.current_block = Block(self.board)
         self.fall_time = 0
 
+    # 检查游戏是否结束
     def check_game_over(self):
-        # 检查游戏是否结束
         if any(row for row in self.board[0]):
             return True
         return False

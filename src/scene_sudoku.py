@@ -151,12 +151,10 @@ class GameSudoku(scene.Scene):
                     (i * self.GridSize70 + self.GridLineWidth * i,
                      self.GridSideLength - self.GridLineWidth), self.GridLineWidth)
                 # 绘制黑色水平线条
-                pygame.draw.line(
-                    self.screen, self.GridLineColor_Black,
-                    (0, i * self.GridSize70 + self.GridLineWidth * i),
-                    (self.GridSideLength - self.GridLineWidth,
-                     i * self.GridSize70 + self.GridLineWidth * i),
-                    self.GridLineWidth)
+                pygame.draw.line(self.screen, self.GridLineColor_Black,
+                                 (0, i * self.GridSize70 + self.GridLineWidth * i),
+                                 (self.GridSideLength - self.GridLineWidth,
+                                  i * self.GridSize70 + self.GridLineWidth * i), self.GridLineWidth)
 
     def draw_number(self):
         # 更改数字颜色
@@ -229,7 +227,8 @@ class GameSudoku(scene.Scene):
                 pos = pygame.mouse.get_pos()
                 x, y = pos  # 获取鼠标位置
                 # 根据鼠标位置判断操作所在的区域
-                if (x > self.GridLineWidth and y > self.GridLineWidth) and (x < self.GridSideLength - self.GridLineWidth + self.RegionWidth and y < self.GridSideLength - self.GridLineWidth):
+                if (x > self.GridLineWidth and y > self.GridLineWidth) and \
+                        (x < self.GridSideLength - self.GridLineWidth + self.RegionWidth and y < self.GridSideLength - self.GridLineWidth):
                     x_index = (x + self.GridLineWidth) // self.GridSize70
                     y_index = (y + self.GridLineWidth) // self.GridSize70
                     x = (x - (x_index * self.GridLineWidth)) // self.GridSize70
@@ -265,7 +264,6 @@ class GameSudoku(scene.Scene):
         return True
 
     # 重新开始游戏
-
     def restart(self, mode='easy'):
         self.mode = mode
         self.generate_sudoku()  # 生成数独
@@ -276,8 +274,7 @@ class GameSudoku(scene.Scene):
     # 数独的生成算法：
     # 1. 随机填充数字，直到没有唯一解
     # 2. 随机删除一些单元格，直到有唯一解
-    # 3. 重复步骤1和步骤2，直到生成满意的数独
-
+    # 3. 重复步骤1和步骤2，直到生成满意的数独(弃用)
     def is_safe(self, row, col, num):
         # 检查数字在行中是否已被使用
         if num in self.Number[row]:
