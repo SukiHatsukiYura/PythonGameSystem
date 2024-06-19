@@ -2,6 +2,8 @@ import pygame
 import scene
 import button
 import scene_manager as sm
+import sys
+
 
 class StartScene(scene.Scene):
     """
@@ -32,11 +34,11 @@ class StartScene(scene.Scene):
 
     def Handle_Event(self):  # 处理事件
         self.btn_start.btn_click(self.screen, sm.scenemanager.change_scene, mode="scene_mode")
-        self.btn_quit.btn_click(self.screen, pygame.quit, exit)
+        self.btn_quit.btn_click(self.screen, pygame.quit, sys.exit)
 
         if pygame.event.poll().type == pygame.KEYDOWN:
             if pygame.key.get_pressed()[pygame.K_RETURN]:  # 按下回车键
                 sm.scenemanager.change_scene("scene_mode")  # 切换到游戏场景
             elif pygame.key.get_pressed()[pygame.K_ESCAPE]:  # 按下ESC键
                 pygame.quit()  # 退出pygame
-                exit()  # 退出程序
+                sys.exit()  # 退出程序
