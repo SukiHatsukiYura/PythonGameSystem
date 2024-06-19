@@ -9,34 +9,24 @@ class Button:
     :draw(self, screen, transparent_color=255): 绘制按钮
     :is_clicked(self, mouse_pos): 检查按钮是否被点击
     """
-    # 初始化按钮的属性
-    x = 0  # 按钮左上角的x坐标
-    y = 0  # 按钮左上角的y坐标
-    width = 0  # 按钮的宽度
-    height = 0  # 按钮的高度
-    color = (0, 0, 0)  # 按钮的颜色，默认为黑色
-    text = ""  # 按钮上显示的文本内容
-    text_color = (0, 0, 0)  # 文本颜色，默认为黑色
-    font_size = 0  # 文本字体大小
-    font_name = None  # 字体名称，默认为黑体
-    font = None  # 字体对象
 
     def __init__(self, x, y,
                  width, height, color,
                  text, text_color, font_size,
                  font_name=pygame.font.match_font("SimHei")):
-        # 初始化按钮属性
         pygame.init()
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.color = color
-        self.text = text
-        self.text_color = text_color
-        self.font_size = font_size
-        self.font_name = font_name
-        self.font = pygame.font.Font(font_name, self.font_size)
+        # 初始化按钮的属性
+        self.x = x  # 按钮左上角的x坐标
+
+        self.y = y  # 按钮左上角的y坐标
+        self.width = width  # 按钮的宽度
+        self.height = height  # 按钮的高度
+        self.color = color  # 按钮的颜色，默认为黑色
+        self.text = text  # 按钮上显示的文本内容
+        self.text_color = text_color  # 文本颜色，默认为黑色
+        self.font_size = font_size  # 文本字体大小
+        self.font_name = font_name  # 字体名称，默认为黑体
+        self.font = pygame.font.Font(font_name, self.font_size)  # 字体对象
 
     def draw(self, screen, transparent_color=255):
         """
@@ -50,11 +40,9 @@ class Button:
                                       pygame.SRCALPHA)
 
         # 在表面上绘制一个带有圆角的矩形
-        pygame.draw.rect(
-            rect_surface,
+        pygame.draw.rect(rect_surface,
             (self.color[0], self.color[1], self.color[2], transparent_color),
-            (0, 0, self.width, self.height),
-            border_radius=15)
+            (0, 0, self.width, self.height), border_radius=15)
         # 在按钮四周加上边框
         pygame.draw.rect(rect_surface, (0, 0, 0),
                          (0, 0, self.width, self.height),
@@ -62,13 +50,11 @@ class Button:
                          border_radius=10)
         # 将绘制好的矩形表面放置在屏幕上的指定位置
         screen.blit(rect_surface, (self.x, self.y))
-
         text = self.font.render(self.text, True, (self.text_color))
         # 文本居中
         text_rect = text.get_rect(center=(self.x + self.width / 2,
-                                          self.y + self.height / 2))
-        # 绘制文本
-        screen.blit(text, text_rect)
+                                          self.y + self.height / 2)) 
+        screen.blit(text, text_rect) # 绘制文本
 
     def btn_click(self, screen, *args, mode=None, unclick_color=(237, 224, 200), click_color=(127, 127, 127)):
         """

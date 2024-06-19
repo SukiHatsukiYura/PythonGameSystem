@@ -40,21 +40,15 @@ class SceneManager:
             pygame.display.set_caption(self.current_scene.title)  # 设置标题
         else:
             pygame.display.set_caption(self.current_scene.title)  # 设置标题
-
         print(f"\r切换到场景:{scene_name}", end="")
 
     def Handle_Event(self):
-        """
-        处理事件
-        """
+        # 处理事件
         self.current_scene.Handle_Event()
 
     def Draw_Scene(self):
-        """
-        绘制当前场景
-        """
+        # 绘制当前场景
         self.current_scene.Draw()
-
 
 # 创建场景管理器对象
 scenemanager = SceneManager()

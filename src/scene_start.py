@@ -3,7 +3,6 @@ import scene
 import button
 import scene_manager as sm
 
-
 class StartScene(scene.Scene):
     """
     :开始场景,继承自场景基类(scene.Scene)
@@ -25,10 +24,8 @@ class StartScene(scene.Scene):
         bg = pygame.image.load(self.bg_path).convert()  # 加载背景图片
         scaled_bg = pygame.transform.smoothscale(bg, self.size)  # 缩放背景图片
         self.screen.blit(scaled_bg, (0, 0))  # 将背景图片覆盖到屏幕上
-
         self.btn_start.draw(self.screen, 120)  # 画出开始按钮
         self.btn_quit.draw(self.screen, 120)  # 画出退出按钮
-
         # 绘制文本信息
         self.screen.blit(self.text_font.render("Enter To Start", True, (0, 0, 0)), (332, 373))
         self.screen.blit(self.text_font.render("ESC To Quit", True, (0, 0, 0)), (344, 493))

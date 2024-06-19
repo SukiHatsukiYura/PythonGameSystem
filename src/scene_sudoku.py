@@ -279,17 +279,14 @@ class GameSudoku(scene.Scene):
         # 检查数字在行中是否已被使用
         if num in self.Number[row]:
             return False
-
         # 检查数字在列中是否已被使用
         if any(self.Number[i][col] == num for i in range(9)):
             return False
-
         # 检查数字在3x3子网格中是否已被使用
         subgrid_row, subgrid_col = 3 * (row // 3), 3 * (col // 3)
         if any(num == self.Number[subgrid_row + i][subgrid_col + j]
                for i in range(3) for j in range(3)):
             return False
-
         return True
 
     def solve_sudoku(self, row=0, col=0):
@@ -301,7 +298,6 @@ class GameSudoku(scene.Scene):
         # grid_copy = [row[:] for row in self.Number]
         if self.Number[row][col] != 0:  # 跳过已填充的单元格
             return self.solve_sudoku(next_row, next_col)
-
         # 尝试不同的数字填入当前单元格
         for num in random.sample(range(1, 10), 9):
             if self.is_safe(row, col, num):
@@ -309,7 +305,6 @@ class GameSudoku(scene.Scene):
                 if self.solve_sudoku(next_row, next_col):
                     return True
                 self.Number[row][col] = 0  # 如果填入的数字导致无解，则回溯
-
         return False  # 未找到解
 
     def generate_sudoku(self):

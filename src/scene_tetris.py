@@ -99,7 +99,6 @@ class Block:
         # 提前计算新位置的坐标
         new_x = self.x + dx
         new_y = self.y + dy
-
         # 检查当前方块是否能够在指定的偏移量下移动到新位置
         for i, row in enumerate(self.shape):
             for j, cell in enumerate(row):

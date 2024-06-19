@@ -1,6 +1,5 @@
 import pygame
 
-
 class Scene:
 
     screen = None  # 场景对象

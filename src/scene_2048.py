@@ -6,7 +6,6 @@ import button
 from tkinter import messagebox
 import json
 
-
 # 定义游戏类
 class Game2048(scene.Scene):
 
